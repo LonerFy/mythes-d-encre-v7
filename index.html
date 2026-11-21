@@ -1,0 +1,1874 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mythes d'encre · 墨神話</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Yuji+Boku&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#060606;--ink2:#101011;--paper:#ECEAE5;--dim:#B9B6AF;--seal:#C0341F}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--ink);color:var(--paper);overflow:hidden}
+body{font-family:'Shippori Mincho','Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+.kan{font-family:'Yuji Boku','Shippori Mincho','Hiragino Mincho ProN','Yu Mincho',serif;font-weight:400}
+.hide{display:none!important}
+
+.grain{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:55;opacity:.055}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:60;mix-blend-mode:difference}
+#brushfx{position:fixed;inset:0;pointer-events:none;z-index:70}
+#jetA{position:fixed;inset:0;pointer-events:none;z-index:80}
+#jetB{position:fixed;inset:0;pointer-events:none;z-index:81}
+
+/* ---------- HUD & dock ---------- */
+.hud{position:fixed;left:0;right:0;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:18px 28px;pointer-events:none}
+.hud>*{pointer-events:auto}
+.brand{display:flex;align-items:baseline;gap:12px;background:none;border:0;padding:6px 0;cursor:pointer}
+.brand .kan{font-size:26px}
+.brandl{font-size:12px;letter-spacing:.3em;text-transform:uppercase;opacity:.7}
+.hudr{display:flex;align-items:center;gap:20px}
+#count{font-size:14px;letter-spacing:.2em;font-variant-numeric:tabular-nums;opacity:.8}
+.sndb{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 14px;background:rgba(6,6,6,.5);border:1px solid rgba(236,234,229,.4);cursor:pointer;font-size:12px;letter-spacing:.18em;text-transform:uppercase}
+.sndb .kan{font-size:20px;letter-spacing:0}
+.sndb:hover{background:var(--paper);color:var(--ink)}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:center;align-items:center;gap:16px;padding:0 16px 22px;pointer-events:none}
+.dock>*{pointer-events:auto}
+.dots{display:flex;gap:12px;position:relative}
+.dot,.cbtn{position:relative;width:48px;height:48px;border-radius:50%;border:1px solid rgba(236,234,229,.45);background:rgba(6,6,6,.6);color:var(--paper);display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;transition:background .3s,color .3s,border-color .3s,transform .3s}
+.dot .kan{font-size:24px;line-height:1}
+.cbtn{font-size:20px}
+.dot:hover,.cbtn:hover{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.dot.on{background:var(--paper);color:var(--ink);border-color:var(--paper);transform:translateY(-6px)}
+.dl{position:absolute;bottom:58px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--ink);border:1px solid rgba(236,234,229,.35);padding:5px 12px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:0;pointer-events:none;transition:opacity .25s;color:var(--paper)}
+.dot:hover .dl,.dot:focus-visible .dl{opacity:1}
+.btn:focus-visible,.dot:focus-visible,.cbtn:focus-visible,.sndb:focus-visible,.tile:focus-visible,.vat:focus-visible,.brand:focus-visible,.x:focus-visible{outline:2px solid var(--paper);outline-offset:4px}
+
+/* ---------- chapitres ---------- */
+#stage{position:fixed;inset:0;z-index:1}
+.ch{position:absolute;inset:0;padding:84px 56px 116px;overflow-x:hidden;overflow-y:auto;visibility:hidden}
+.ch.on{visibility:visible}
+.wm{position:absolute;right:-30px;top:40px;font-size:min(62vw,720px);line-height:1;color:rgba(236,234,229,.045);pointer-events:none;user-select:none}
+.wrap{position:relative;width:100%;max-width:1240px;margin:0 auto;min-height:100%}
+.g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:36px 56px;align-items:center}
+.col{display:flex;flex-direction:column;justify-content:center;gap:26px}
+.txt{display:flex;flex-direction:column;align-items:flex-start;gap:22px;position:relative;z-index:2}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.24em;text-transform:uppercase;opacity:.75}
+.eyebrow .kan{font-size:16px;letter-spacing:.08em}
+.big{margin:0;font-weight:800;font-size:clamp(54px,8vw,128px);line-height:.96}
+.h2{margin:0;font-weight:800;font-size:clamp(38px,5vw,76px);line-height:1}
+.h3{font-weight:800;font-size:26px;line-height:1.1}
+.lead{margin:0;max-width:46ch;font-size:18px;line-height:1.75;color:#CFCCC5}
+.lead.sub{margin-top:12px}
+.big2{font-size:clamp(28px,3.4vw,46px);font-weight:800;line-height:1.1;color:var(--paper)}
+.hint{margin:0;font-size:13px;line-height:1.6;color:var(--dim);max-width:52ch}
+.uline{display:block;width:min(340px,80%);height:22px;overflow:visible}
+.row{display:flex;flex-wrap:wrap;gap:12px 14px;align-items:center}
+.counter{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);font-variant-numeric:tabular-nums;margin-right:6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 26px;border:1px solid var(--paper);background:var(--paper);color:var(--ink);font-size:14px;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;transition:background .3s,color .3s;font-family:inherit}
+.btn:hover{background:transparent;color:var(--paper)}
+.btn.ghost{background:transparent;color:var(--paper)}
+.btn.ghost:hover{background:var(--paper);color:var(--ink)}
+
+/* révélations (slide au changement de chapitre) */
+.rv,.rvw{opacity:0}
+.ch.in .rv,.ch.in .rvw{opacity:1}
+
+/* texte à états (glisse) */
+.swap{display:grid;width:100%}
+.swap>.st{grid-area:1/1;opacity:0;transform:translate3d(46px,0,0);pointer-events:none;transition:opacity .6s ease,transform .8s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;gap:14px}
+.swap>.st.show{opacity:1;transform:none;pointer-events:auto}
+.swap>.st.gone{transform:translate3d(-46px,0,0)}
+
+/* ---------- ouverture : l'épée ---------- */
+.swordfig{margin:0;width:min(620px,100%);justify-self:center;display:flex;flex-direction:column;gap:14px;align-items:center}
+.ensowrap{position:relative;width:100%;aspect-ratio:1/1;touch-action:pan-y}
+.enso{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.halo{position:absolute;inset:14%;border-radius:50%;background:radial-gradient(circle,#2a2b2f 0,#16161a 48%,rgba(6,6,6,0) 72%)}
+#sw1,#sw2{position:absolute;inset:0;width:100%;height:100%;cursor:grab;touch-action:pan-y}
+#sw1:active,#sw2:active{cursor:grabbing}
+.swordfig figcaption{font-size:13px;color:var(--dim);text-align:center;max-width:46ch;line-height:1.6}
+
+/* ---------- Amaterasu ---------- */
+.panel{position:relative;width:100%;aspect-ratio:500/440;border:1px solid rgba(236,234,229,.3);overflow:hidden;cursor:grab;touch-action:pan-y;justify-self:center;max-width:640px}
+.panel svg{position:absolute;inset:0;width:100%;height:100%}
+
+/* ---------- Orochi ---------- */
+.scene{display:flex;flex-direction:column;gap:14px;width:100%;max-width:680px;justify-self:center}
+.serpwrap{position:relative;width:100%;aspect-ratio:720/440;border:1px solid rgba(236,234,229,.3);background:#09090A;overflow:hidden}
+#serp{position:absolute;inset:0;width:100%;height:100%}
+.neck{transform-box:fill-box;transform-origin:50% 100%;animation:sway 5.5s ease-in-out infinite;animation-delay:var(--sd,0s);transition:transform 1.6s cubic-bezier(.3,.7,.2,1),opacity 1.6s}
+.neck.sleep{animation:none;transform:rotate(var(--sl,30deg)) translateY(34px);opacity:.55}
+.neck.cut{animation:none;transform:translateY(80px) rotate(var(--sl,30deg));opacity:0}
+.neck .open{display:inline}
+.neck .shut{display:none}
+.neck.sleep .open{display:none}
+.neck.sleep .shut{display:inline}
+@keyframes sway{0%,100%{transform:rotate(-2.6deg)}50%{transform:rotate(2.6deg)}}
+.swordbox{position:absolute;inset:6% 18%;opacity:0;transform:translate3d(0,40px,0) scale(.9);pointer-events:none;transition:opacity 1.2s ease,transform 1.5s cubic-bezier(.2,.8,.2,1);background:radial-gradient(circle,#26272b 0,#141417 50%,rgba(9,9,10,0) 74%)}
+.swordbox.on{opacity:1;transform:none;pointer-events:auto}
+.vats{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.vat{position:relative;width:50px;height:50px;border-radius:50%;border:2px solid var(--paper);background:#0A0A0B;padding:0;overflow:hidden;cursor:pointer}
+.vat::before{content:"";position:absolute;inset:5px;border-radius:50%;border:1px solid rgba(236,234,229,.4)}
+.vat .lv{position:absolute;left:0;right:0;bottom:0;height:0;background:var(--paper);transition:height .8s cubic-bezier(.3,.8,.2,1)}
+.vat.full .lv{height:100%}
+.vat.full{cursor:default}
+
+/* ---------- Yōkai ---------- */
+.head2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px 56px;align-items:end}
+.car{position:relative;overflow:hidden;padding:6px 0 0;user-select:none}
+.track{display:flex;gap:22px;will-change:transform;transition:transform .85s cubic-bezier(.2,.8,.2,1)}
+.track.drag{transition:none}
+.tile{--fg:#0B0B0B;--bg:#ECEAE5;--mf:#FAF9F6;position:relative;flex:0 0 min(300px,74vw);display:flex;flex-direction:column;gap:6px;padding:20px 20px 18px;background:var(--bg);color:var(--fg);border:1px solid var(--bg);text-align:left;cursor:pointer;overflow:hidden;transition:background .6s,color .6s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.tile:hover{--fg:#ECEAE5;--bg:#101011;--mf:#18181A;border-color:rgba(236,234,229,.4);transform:translateY(-6px)}
+.tile svg{width:100%;height:auto;max-height:290px;display:block}
+.tile .bk{position:absolute;right:14px;top:6px;font-size:64px;line-height:1.1;opacity:.12;pointer-events:none}
+.tl{display:flex;flex-direction:column;gap:2px}
+.tile .eyebrow{color:var(--fg)}
+.mf{fill:var(--mf);transition:fill .6s}
+.ms{stroke:var(--fg);stroke-width:5;stroke-linejoin:round;transition:stroke .6s}
+.mi{fill:var(--fg);transition:fill .6s}
+.mr{fill:none;stroke:var(--seal);stroke-width:6;stroke-linecap:round}
+.mrf{fill:var(--seal);stroke:var(--fg);stroke-width:4}
+.mr0{fill:none;stroke-width:7;stroke-linecap:round}
+.mf2{fill:none;stroke:var(--mf);stroke-width:4}
+.carnav{display:flex;gap:12px;justify-content:flex-end;margin-top:14px}
+.shade{position:fixed;inset:0;background:rgba(0,0,0,.62);opacity:0;pointer-events:none;transition:opacity .5s;z-index:25}
+.shade.on{opacity:1;pointer-events:auto}
+.drawer{--fg:#0B0B0B;--bg:#ECEAE5;--mf:#FAF9F6;position:fixed;top:0;right:0;height:100%;width:min(540px,100%);background:var(--paper);color:#0B0B0B;z-index:30;padding:92px 40px 40px 66px;overflow:auto;transform:translateX(106%);transition:transform .95s cubic-bezier(.7,0,.15,1);clip-path:polygon(6% 0,100% 0,100% 100%,2% 100%,0 88%,4% 72%,0 54%,5% 36%,0 18%,3% 6%)}
+.drawer.on{transform:none}
+.drawer .eyebrow{color:#0B0B0B;opacity:.7}
+.drawer .lead{color:#1C1C1C;max-width:none}
+.dmask{width:min(250px,64%);margin:0 0 16px}
+.dh{font-size:clamp(40px,5vw,64px)}
+.dp{margin-top:14px}
+.x{position:absolute;right:26px;top:24px;width:48px;height:48px;border:1px solid #0B0B0B;background:transparent;font-size:28px;line-height:1;cursor:pointer;color:#0B0B0B}
+.x:hover{background:#0B0B0B;color:var(--paper)}
+
+/* ---------- Cent bougies ---------- */
+.glow{position:absolute;inset:0;pointer-events:none;opacity:var(--lit,1);transition:opacity 1s;background:radial-gradient(52% 58% at 74% 52%,rgba(236,234,229,.12),rgba(6,6,6,0) 72%)}
+.candwrap{position:relative;display:grid;place-items:center;justify-self:center;padding:10px}
+.cgrid{display:grid;grid-template-columns:repeat(10,26px);gap:6px 9px}
+.candle{position:relative;width:26px;height:52px;background:none;border:0;padding:0;cursor:pointer}
+.candle::before{content:"";position:absolute;left:7px;right:7px;bottom:0;height:24px;border-radius:2px;background:linear-gradient(90deg,#8F8C86,#E6E3DC 45%,#B4B1AA)}
+.candle::after{content:"";position:absolute;left:12px;width:2px;height:7px;bottom:24px;background:#1b1b1b}
+.fl{position:absolute;left:8px;top:3px;width:10px;height:19px;border-radius:50% 50% 50% 50%/64% 64% 36% 36%;background:radial-gradient(ellipse at 50% 72%,#fff 0,#fff 34%,rgba(255,255,255,.55) 72%);box-shadow:0 0 12px 4px rgba(255,255,255,.38);animation:flick 1.7s ease-in-out infinite;animation-delay:var(--fd,0s);transform-origin:50% 100%;transition:opacity .5s,transform .6s}
+.candle.out .fl{opacity:0;transform:scale(.15) translateY(-6px);animation:none;box-shadow:none}
+.candle.out{cursor:default}
+@keyframes flick{0%,100%{transform:scale(1,1) rotate(-1.5deg)}25%{transform:scale(.92,1.06) rotate(1.8deg)}50%{transform:scale(1.04,.96) rotate(-.6deg)}75%{transform:scale(.95,1.04) rotate(1.2deg)}}
+.eye{position:absolute;left:50%;top:50%;width:min(320px,72%);transform:translate(-50%,-50%) scale(.55);opacity:0;pointer-events:none;transition:opacity 1.6s ease,transform 2s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 0 18px rgba(236,234,229,.5))}
+.eye.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+
+/* ---------- nouveaux mythes ---------- */
+.cvs{position:relative;width:100%;max-width:640px;aspect-ratio:500/440;justify-self:center;border:1px solid rgba(236,234,229,.3);background:radial-gradient(120% 100% at 50% 40%,#141417,#09090A 72%);overflow:hidden;touch-action:pan-y}
+.cvs canvas,.cvs svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.cvs canvas{cursor:crosshair}
+.slw{display:flex;flex-direction:column;gap:6px;width:min(360px,100%)}
+.slw input{width:100%;accent-color:var(--paper);height:28px;cursor:pointer;margin:0}
+.slw .counter{margin:0}
+.tail{cursor:pointer}
+.tail .tb{fill:#141416;stroke:#4B4B50;stroke-width:2.5;stroke-linejoin:round;transition:fill .9s,stroke .9s}
+.tail .tt{fill:#2D2D31;transition:fill .9s}
+.tail .fire{opacity:0;transform-box:fill-box;transform-origin:50% 100%;transition:opacity .7s}
+.tail.lit{filter:drop-shadow(0 0 7px rgba(236,234,229,.45))}
+.tail.lit .tb{fill:#E7E4DD;stroke:#fff}
+.tail.lit .tt{fill:#fff}
+.tail.lit .fire{opacity:1;animation:fl2 1.35s ease-in-out infinite;animation-delay:var(--fd,0s)}
+.tail:hover .tb{stroke:#ECEAE5}
+@keyframes fl2{0%,100%{transform:scale(1,1) rotate(-2deg)}50%{transform:scale(.86,1.12) rotate(3deg)}}
+.ktEyeOpen{display:none}
+#kt.awake .ktEyeOpen{display:inline}
+#kt.awake .ktEyeShut{display:none}
+#kt.full #ktHead{filter:drop-shadow(0 0 10px rgba(236,234,229,.55))}
+#ktAuraC{transition:opacity 1.6s}
+.orb{fill:#fff;opacity:0;transition:opacity 1.4s;animation:drift 6s ease-in-out infinite;animation-delay:var(--od,0s)}
+#kt.some .orb{opacity:.75}
+@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(var(--dx,10px),var(--dy,-24px))}}
+.hide{display:none!important}
+@media (max-width:620px){
+  .dots{overflow-x:auto;scrollbar-width:none;max-width:calc(100vw - 2*44px - 2*8px - 28px);padding:10px 2px 4px;margin:-10px 0 -4px}
+  .dots::-webkit-scrollbar{display:none}
+  .dot{flex:0 0 auto}
+  .dl{display:none}
+}
+
+
+/* ---------- adaptatif ---------- */
+@media (max-width:980px){
+  .g2,.head2{grid-template-columns:minmax(0,1fr)}
+  .ch{padding:76px 22px 112px}
+  .wm{font-size:90vw}
+  .swordfig,.panel,.scene{max-width:520px}
+  .cgrid{grid-template-columns:repeat(10,22px);gap:5px 6px}
+  .candle{width:22px;height:46px}
+  .candle::before{left:5px;right:5px;height:21px}
+  .candle::after{left:10px;bottom:21px}
+  .fl{left:6px;top:3px}
+}
+@media (max-width:620px){
+  .hud{padding:12px 14px}
+  .brandl{display:none}
+  .dots{gap:7px}
+  .dot,.cbtn{width:44px;height:44px}
+  .dock{gap:8px;padding-bottom:14px}
+  .drawer{padding:84px 22px 28px 40px}
+  .ch{padding-bottom:132px}
+  #c0 .swordfig{order:-1;max-width:290px;margin-top:-8px}
+  #c0 .swordfig figcaption{display:none}
+  .dock::before{content:'';position:absolute;left:0;right:0;bottom:0;height:92px;background:linear-gradient(to top,rgba(6,6,6,.92),rgba(6,6,6,0));z-index:-1}
+}
+@media (hover:none){.dl{display:none}}
+.car{touch-action:pan-y}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+<filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+<feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="3" seed="7" result="n"></feTurbulence>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+</filter>
+<filter id="roughS" x="-10%" y="-10%" width="120%" height="120%">
+<feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="2" seed="3" result="n"></feTurbulence>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+</filter>
+<filter id="grain" x="0" y="0" width="100%" height="100%">
+<feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"></feTurbulence>
+<feColorMatrix type="saturate" values="0"></feColorMatrix>
+</filter>
+<pattern id="scales" x="0" y="0" width="44" height="22" patternUnits="userSpaceOnUse">
+<g fill="#0B0B0C" stroke="#ECEAE5" stroke-width="1.6">
+<circle cx="22" cy="-11" r="22"></circle><circle cx="22" cy="-11" r="14"></circle><circle cx="22" cy="-11" r="6"></circle>
+<circle cx="0" cy="0" r="22"></circle><circle cx="0" cy="0" r="14"></circle><circle cx="0" cy="0" r="6"></circle>
+<circle cx="44" cy="0" r="22"></circle><circle cx="44" cy="0" r="14"></circle><circle cx="44" cy="0" r="6"></circle>
+<circle cx="22" cy="11" r="22"></circle><circle cx="22" cy="11" r="14"></circle><circle cx="22" cy="11" r="6"></circle>
+<circle cx="0" cy="22" r="22"></circle><circle cx="0" cy="22" r="14"></circle><circle cx="0" cy="22" r="6"></circle>
+<circle cx="44" cy="22" r="22"></circle><circle cx="44" cy="22" r="14"></circle><circle cx="44" cy="22" r="6"></circle>
+<circle cx="22" cy="33" r="22"></circle><circle cx="22" cy="33" r="14"></circle><circle cx="22" cy="33" r="6"></circle>
+</g>
+</pattern>
+</defs>
+</svg>
+
+<svg class="grain" aria-hidden="true"><rect width="100%" height="100%" filter="url(#grain)"></rect></svg>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<canvas id="brushfx" aria-hidden="true"></canvas>
+<canvas id="jetA" aria-hidden="true"></canvas>
+<canvas id="jetB" aria-hidden="true"></canvas>
+
+<header class="hud">
+<button class="brand" data-goto="0" aria-label="Retour à l'ouverture"><span class="kan">墨神話</span><span class="brandl">Sumi Shinwa</span></button>
+<div class="hudr">
+<span id="count" aria-live="polite">01 / 09</span>
+<button id="snd" class="sndb" aria-pressed="false" aria-label="Activer ou couper le son"><span class="kan">音</span><span id="sndl">Son : non</span></button>
+</div>
+</header>
+
+<main id="stage">
+
+<!-- ============ 1 · OUVERTURE ============ -->
+<section class="ch on" id="c0" aria-label="Ouverture">
+<span class="kan wm" aria-hidden="true">神</span>
+<div class="wrap g2">
+<div class="txt">
+<p class="eyebrow rv" style="--d:.1s"><span class="kan">墨神話</span> &nbsp;·&nbsp; Sumi Shinwa</p>
+<h1 class="big rvw" style="--d:.2s">Mythes<br>d'encre</h1>
+<svg class="uline rv" style="--d:.45s" viewBox="0 0 320 22" aria-hidden="true"><path d="M4 13 C 70 3, 150 20, 316 8" fill="none" stroke="#ECEAE5" stroke-width="6" stroke-linecap="round" filter="url(#roughS)"></path></svg>
+<p class="lead rv" style="--d:.55s">Neuf récits du Japon ancien, racontés à l'encre blanche : une déesse dans une grotte, un serpent à huit têtes, une princesse de bambou, un renard à neuf queues, deux amants séparés par le ciel, un pêcheur et sa boîte, des esprits masqués, cent bougies.</p>
+<div class="row rv" style="--d:.7s"><button class="btn" data-goto="1">Ouvrir le premier récit</button></div>
+<p class="hint rv" style="--d:.85s">Un rond d'encre suit ton curseur : clique, il gonfle. Les kanji en bas ouvrent chaque récit.</p>
+</div>
+<figure class="swordfig rv noswipe" style="--d:.35s">
+<div class="ensowrap">
+<svg class="enso" viewBox="-200 -200 400 400" aria-hidden="true">
+<g transform="rotate(-60)" filter="url(#rough)" fill="none" stroke="#ECEAE5" stroke-linecap="round">
+<circle r="182" stroke-width="12" stroke-dasharray="1010 140"></circle>
+<circle r="190" stroke-width="3" opacity=".5" stroke-dasharray="720 480"></circle>
+</g>
+</svg>
+<div class="halo" aria-hidden="true"></div>
+<canvas id="sw1" role="img" aria-label="Épée antique à lame droite et pommeau à trois pointes, qui tourne sur elle-même dans un halo qui scintille"></canvas>
+</div>
+<figcaption>Kusanagi-no-Tsurugi, l'épée sortie de la queue du serpent (chapitre 3). Fais-la tourner.</figcaption>
+</figure>
+</div>
+</section>
+
+<!-- ============ 2 · AMATERASU ============ -->
+<section class="ch" id="c1" aria-label="La grotte du soleil">
+<span class="kan wm" aria-hidden="true">日</span>
+<div class="wrap g2 rev">
+<div class="txt">
+<p class="eyebrow rv" style="--d:.1s">Chapitre 2 &nbsp;·&nbsp; <span class="kan">日</span> &nbsp;·&nbsp; Ama-no-Iwato</p>
+<h2 class="h2 rvw" style="--d:.2s">La grotte<br>du soleil</h2>
+<div class="swap rv" style="--d:.45s" id="caveText">
+<div class="st show" data-s="0">
+<p class="lead">Furieuse des méfaits de son frère Susanoo, la déesse du soleil Amaterasu s'enferme dans la grotte céleste et roule une roche devant l'entrée. Le monde s'éteint.</p>
+<p class="hint">Fais glisser la roche vers la gauche, ou clique dessus.</p>
+</div>
+<div class="st" data-s="1">
+<p class="lead">Devant la grotte, les dieux font la fête. Uzume danse, tous éclatent de rire. Intriguée, Amaterasu entrouvre la roche : un miroir lui renvoie son éclat, et le dieu Tajikarao la tire dehors. Une corde sacrée interdit de retourner dans la grotte.</p>
+<p class="hint">Le miroir, Yata no Kagami, devient l'un des trois trésors impériaux. D'après le Kojiki (712) et le Nihon Shoki (720).</p>
+</div>
+</div>
+<div class="row rv" style="--d:.65s">
+<button class="btn ghost" id="caveBtn">Refermer la grotte</button>
+<button class="btn" data-goto="2">Récit suivant</button>
+</div>
+</div>
+<div class="panel noswipe rv" style="--d:.3s" id="cave">
+<svg viewBox="0 0 500 440" preserveAspectRatio="xMidYMid slice" aria-label="La grotte d'Amaterasu : une roche glisse pour libérer le soleil" role="img">
+<rect id="cvBg" width="500" height="440" fill="#0C0C0D"></rect>
+<g id="cvStars" fill="#ECEAE5">
+<circle cx="40" cy="40" r="1.6"></circle><circle cx="110" cy="70" r="1.2"></circle><circle cx="190" cy="30" r="1.8"></circle><circle cx="300" cy="55" r="1.3"></circle><circle cx="380" cy="28" r="1.7"></circle><circle cx="450" cy="82" r="1.2"></circle><circle cx="70" cy="120" r="1.1"></circle><circle cx="420" cy="140" r="1.5"></circle><circle cx="250" cy="20" r="1.1"></circle>
+</g>
+<g id="cvSun">
+<g id="cvRays" stroke="#161616" stroke-width="3" stroke-linecap="round" opacity="0">
+<path d="M250 220 m0 -130 v-44 M250 220 m47 -121 l22 -38 M250 220 m92 -92 l32 -32 M250 220 m121 -47 l38 -22 M250 220 m130 0 h44 M250 220 m121 47 l38 22 M250 220 m92 92 l32 32 M250 220 m47 121 l22 38 M250 220 m0 130 v44 M250 220 m-47 121 l-22 38 M250 220 m-92 92 l-32 32 M250 220 m-121 47 l-38 22 M250 220 m-130 0 h-44 M250 220 m-121 -47 l-38 -22 M250 220 m-92 -92 l-32 -32 M250 220 m-47 -121 l-22 -38"></path>
+</g>
+<circle id="cvDisc" cx="250" cy="220" r="100" fill="#C0341F" filter="url(#roughS)"></circle>
+</g>
+<g fill="#161616" filter="url(#roughS)">
+<path fill-rule="evenodd" d="M0 440 L0 150 Q70 96 140 128 L205 70 L300 66 L372 112 Q440 90 500 140 L500 440 Z M250 98 a122 122 0 1 0 0.01 0 Z"></path>
+</g>
+<g id="cvMirror" opacity="0">
+<path d="M500 250 C 470 262 440 276 408 296" fill="none" stroke="#161616" stroke-width="6" stroke-linecap="round"></path>
+<path d="M440 270 q-8 -20 6 -34 M452 262 q8 -22 26 -26" fill="none" stroke="#161616" stroke-width="4" stroke-linecap="round"></path>
+<circle cx="400" cy="318" r="36" fill="#ECEAE5" stroke="#161616" stroke-width="5"></circle>
+<circle cx="400" cy="318" r="26" fill="none" stroke="#161616" stroke-width="2" opacity=".5"></circle>
+<path d="M386 306 q8 -10 20 -8" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"></path>
+</g>
+<g id="cvRope" opacity="0" fill="none" stroke="#161616" stroke-linecap="round">
+<path d="M128 150 Q 250 196 372 150" stroke-width="8"></path>
+<path d="M160 168 l-4 24 l12 -2 l-6 20 M214 181 l-4 24 l12 -2 l-6 20 M276 182 l-4 24 l12 -2 l-6 20 M332 168 l-4 24 l12 -2 l-6 20" stroke-width="3.4"></path>
+</g>
+<g id="cvStone" filter="url(#rough)">
+<circle cx="250" cy="220" r="126" fill="#2B2B2E"></circle>
+<path d="M170 170 q40 -30 90 -20 M200 260 q50 30 110 6 M300 190 q22 10 30 40" fill="none" stroke="#454548" stroke-width="5" stroke-linecap="round"></path>
+</g>
+</svg>
+</div>
+</div>
+</section>
+
+<!-- ============ 3 · OROCHI ============ -->
+<section class="ch" id="c2" aria-label="Le serpent à huit têtes">
+<span class="kan wm" aria-hidden="true">蛇</span>
+<div class="wrap g2 rev">
+<div class="txt">
+<p class="eyebrow rv" style="--d:.1s">Chapitre 3 &nbsp;·&nbsp; <span class="kan">蛇</span> &nbsp;·&nbsp; Yamata no Orochi</p>
+<h2 class="h2 rvw" style="--d:.2s">Le serpent<br>à huit têtes</h2>
+<div class="swap rv" style="--d:.45s" id="orText">
+<div class="st show" data-s="0">
+<p class="lead">Exilé du ciel, le dieu Susanoo rencontre à Izumo un couple en larmes : un serpent à huit têtes et huit queues a déjà dévoré sept de leurs filles. La dernière, Kushinada, sera la prochaine.</p>
+<p class="lead sub">Susanoo fait brasser un saké très fort et le range dans huit cuves. Le serpent boit, une tête par cuve. Verse le saké.</p>
+</div>
+<div class="st" data-s="1">
+<p class="lead">Les huit têtes sont tombées de sommeil. Susanoo n'a plus qu'à frapper.</p>
+</div>
+<div class="st" data-s="2">
+<p class="lead">Dans l'une des queues, son épée heurte une lame inconnue : Kusanagi-no-Tsurugi. Il l'offre à Amaterasu. Elle devient l'un des trois trésors impériaux.</p>
+<p class="hint">Elle tourne ici, comme au début.</p>
+</div>
+</div>
+<div class="row rv" style="--d:.65s">
+<span class="counter" id="orCount" aria-live="polite">Cuves remplies : 0 / 8</span>
+<button class="btn hide" id="strikeBtn">Frapper</button>
+<button class="btn" data-goto="3">Récit suivant</button>
+</div>
+</div>
+<div class="scene noswipe rv" style="--d:.3s">
+<div class="serpwrap" id="serpWrap">
+<svg id="serp" viewBox="0 0 720 440" role="img" aria-label="Un serpent à huit têtes"></svg>
+<div class="swordbox" id="swordBox"><canvas id="sw2" role="img" aria-label="Kusanagi-no-Tsurugi, l'épée trouvée dans la queue du serpent"></canvas></div>
+</div>
+<div class="vats" id="vats" role="group" aria-label="Huit cuves de saké"></div>
+</div>
+</div>
+</section>
+
+<!-- ============ 4 · KAGUYA-HIME ============ -->
+<section class="ch" id="c5" aria-label="Kaguya-hime, la princesse du bambou">
+<span class="kan wm" aria-hidden="true">竹</span>
+<div class="wrap g2 rev">
+<div class="txt">
+<p class="eyebrow rv" style="--d:.1s">Chapitre 4 &nbsp;·&nbsp; <span class="kan">竹</span> &nbsp;·&nbsp; Taketori monogatari</p>
+<h2 class="h2 rvw" style="--d:.2s">La princesse<br>du bambou</h2>
+<div class="swap rv" style="--d:.45s" id="kgText">
+<div class="st show" data-s="0">
+<p class="lead">Un vieux coupeur de bambou remarque une tige qui brille au cœur de la forêt. Il la fend : à l'intérieur, une fillette de la taille d'un pouce.</p>
+<p class="hint">Glisse le doigt ou la souris à travers les bambous pour les trancher, et trouve celui qui brille.</p>
+</div>
+<div class="st" data-s="1">
+<p class="lead">Il la ramène chez lui. En quelques mois elle devient une jeune femme si lumineuse qu'on l'appelle Kaguya-hime, « la princesse qui brille ». Des nobles, et même l'empereur, la demandent en mariage. Elle les éconduit tous par des épreuves impossibles.</p>
+<p class="hint">Le Taketori monogatari, « conte du coupeur de bambou », date d'environ le Xe siècle.</p>
+</div>
+<div class="st" data-s="2">
+<p class="lead">Une nuit de pleine lune, des êtres célestes descendent la chercher. Kaguya vient de la lune, elle doit y retourner.</p>
+</div>
+<div class="st" data-s="3">
+<p class="lead">Elle laisse à l'empereur une lettre et un élixir d'immortalité. Sans elle, il n'en veut plus : il le fait brûler au sommet de la plus haute montagne du pays.</p>
+<p class="hint">Selon une étymologie populaire, le nom du mont Fuji viendrait de là (fushi, « immortel »).</p>
+</div>
+</div>
+<div class="row rv" style="--d:.65s">
+<span class="counter" id="kgCount" aria-live="polite">Bambous coupés : 0</span>
+<button class="btn hide" id="kgMoon">Laisser la lune venir</button>
+<button class="btn ghost hide" id="kgReset">Refaire pousser</button>
+<button class="btn" data-goto="4">Récit suivant</button>
+</div>
+</div>
+<div class="cvs noswipe rv" style="--d:.3s"><canvas id="kgc" role="img" aria-label="Une forêt de bambous sous la lune : un bambou brille de l'intérieur"></canvas></div>
+</div>
+</section>
+
+<!-- ============ 5 · KITSUNE ============ -->
+<section class="ch" id="c6" aria-label="Le renard à neuf queues">
+<span class="kan wm" aria-hidden="true">狐</span>
+<div class="wrap g2 rev">
+<div class="txt">
+<p class="eyebrow rv" style="--d:.1s">Chapitre 5 &nbsp;·&nbsp; <span class="kan">狐</span> &nbsp;·&nbsp; Kyūbi no kitsune</p>
+<h2 class="h2 rvw" style="--d:.2s">Le renard<br>à neuf queues</h2>
+<div class="swap rv" style="--d:.45s" id="ktText">
+<div class="st show" data-s="0">
+<p class="lead">Au Japon, le renard est le messager d'Inari, mais aussi un esprit rusé qui prend forme humaine. Avec les siècles et la sagesse, il gagne des queues, jusqu'à neuf.</p>
+<p class="hint">Touche une queue pour l'éveiller : chacune porte une flamme, le kitsunebi, le « feu du renard ».</p>
+</div>
+<div class="st" data-s="1">
+<p class="lead">Neuf queues : le renard a mille ans et voit tout. Les récits l'imaginent tantôt sage et bienveillant, tantôt fatal, comme Tamamo-no-Mae, la dame de cour qui était un renard.</p>
+<p class="hint">Le plus ancien récit de renarde épouse d'un homme figure dans le Nihon ryōiki, au début du IXe siècle.</p>
+</div>
+</div>
+<div class="row rv" style="--d:.65s">
+<span class="counter" id="ktCount" aria-live="polite">0 / 9 queues</span>
+<button class="btn" id="ktAdd">Éveiller une queue</button>
+<button class="btn ghost hide" id="ktReset">Rendormir</button>
+<button class="btn ghost" data-goto="5">Récit suivant</button>
+</div>
+</div>
+<div class="cvs ktbox noswipe rv" style="--d:.3s" id="ktBox">
+<svg id="kt" viewBox="0 0 500 440" role="img" aria-label="Un renard dont les neuf queues s'allument une à une">
+<defs><radialGradient id="ktAura"><stop offset="0" stop-color="#ECEAE5" stop-opacity=".5"></stop><stop offset="1" stop-color="#ECEAE5" stop-opacity="0"></stop></radialGradient></defs>
+<circle id="ktAuraC" cx="250" cy="280" r="240" fill="url(#ktAura)" opacity="0"></circle>
+<g id="ktOrbs"></g>
+<g id="ktTails"></g>
+<g id="ktHead">
+<g id="ktHalf">
+<path d="M250 398 L214 374 Q170 354 142 320 L122 290 Q152 282 158 262 L116 166 L198 226 Q226 238 250 238 Z" fill="#ECEAE5"></path>
+<path d="M136 196 L184 232 L150 252 Z" fill="#17171A"></path>
+<path d="M178 306 Q158 322 150 342 M190 318 Q180 338 178 356" fill="none" stroke="#C0341F" stroke-width="6" stroke-linecap="round"></path>
+<g class="ktEyeShut" fill="none" stroke="#060606" stroke-width="5" stroke-linecap="round"><path d="M186 298 Q208 312 230 298"></path></g>
+<g class="ktEyeOpen"><path d="M186 296 Q208 282 232 304 Q208 318 186 296 Z" fill="#060606"></path><circle cx="210" cy="298" r="2.6" fill="#ECEAE5"></circle></g>
+</g>
+<use href="#ktHalf" transform="translate(500,0) scale(-1,1)"></use>
+<path d="M250 250 L262 268 L250 284 L238 268 Z" fill="#C0341F"></path>
+<path d="M236 380 Q250 370 264 380 Q250 394 236 380 Z" fill="#060606"></path>
+</g>
+</svg>
+</div>
+</div>
+</section>
+
+<!-- ============ 6 · TANABATA ============ -->
+<section class="ch" id="c7" aria-label="Tanabata : Orihime et Hikoboshi">
+<span class="kan wm" aria-hidden="true">星</span>
+<div class="wrap g2 rev">
+<div class="txt">
+<p class="eyebrow rv" style="--d:.1s">Chapitre 6 &nbsp;·&nbsp; <span class="kan">星</span> &nbsp;·&nbsp; Tanabata</p>
+<h2 class="h2 rvw" style="--d:.2s">Deux amants,<br>un fleuve de ciel</h2>
+<div class="swap rv" style="--d:.45s" id="tbText">
+<div class="st show" data-s="0">
+<p class="lead">Orihime, fille du dieu du ciel, tisse des étoffes sur les rives de la Voie lactée. Elle épouse le bouvier Hikoboshi, et ils en oublient leur travail. Le dieu les sépare de part et d'autre du fleuve, mais leur accorde une nuit par an.</p>
+<p class="hint">Clique sur la scène pour appeler une pie : sept pies forment le pont.</p>
+</div>
+<div class="st" data-s="1">
+<p class="lead">Les pies forment un pont de leurs ailes, et les amants se retrouvent. C'est la nuit de Tanabata, le septième jour du septième mois : on accroche des vœux écrits sur des bandes de papier aux branches de bambou.</p>
+<p class="hint">Fête venue de Chine, célébrée au Japon depuis plus de mille ans. Si la pluie tombe ce soir-là, dit-on, les pies ne viennent pas.</p>
+</div>
+</div>
+<div class="row rv" style="--d:.65s">
+<span class="counter" id="tbCount" aria-live="polite">Pont : 0 / 7 pies</span>
+<button class="btn" id="tbCall">Appeler une pie</button>
+<button class="btn ghost" id="tbRain" aria-pressed="false">Faire pleuvoir</button>
+<button class="btn ghost" data-goto="6">Récit suivant</button>
+</div>
+</div>
+<div class="cvs noswipe rv" style="--d:.3s"><canvas id="tbc" role="img" aria-label="Un fleuve d'étoiles que deux amants tentent de franchir sur un pont de pies"></canvas></div>
+</div>
+</section>
+
+<!-- ============ 7 · URASHIMA ============ -->
+<section class="ch" id="c8" aria-label="Urashima Tarō">
+<span class="kan wm" aria-hidden="true">浦</span>
+<div class="wrap g2 rev">
+<div class="txt">
+<p class="eyebrow rv" style="--d:.1s">Chapitre 7 &nbsp;·&nbsp; <span class="kan">浦</span> &nbsp;·&nbsp; Urashima Tarō</p>
+<h2 class="h2 rvw" style="--d:.2s">Le pêcheur<br>et la boîte</h2>
+<div class="swap rv" style="--d:.45s" id="urText">
+<div class="st show" data-s="0">
+<p class="lead">Urashima Tarō sauve une tortue des enfants qui la tourmentent. Pour le remercier, elle l'emmène au palais du dragon, sous la mer, où la princesse Otohime l'accueille. Il s'y plaît tant qu'il y reste trois ans.</p>
+<p class="hint">Fais glisser le curseur : le temps du palais n'est pas celui du rivage.</p>
+</div>
+<div class="st" data-s="1">
+<p class="lead">De retour au rivage, il ne reconnaît rien : trois cents ans ont passé. Otohime lui avait donné une boîte, la tamatebako, en lui interdisant de l'ouvrir. Dans son désarroi, il l'ouvre. Une fumée blanche s'en échappe, et il vieillit d'un coup.</p>
+<p class="hint">Le récit apparaît dès le VIIIe siècle (Nihon shoki, Man'yōshū), puis dans les contes de l'époque Muromachi.</p>
+</div>
+</div>
+<div class="row rv" style="--d:.65s">
+<label class="slw" for="urSl"><span class="counter" id="urCount" aria-live="polite">Au palais : 0 an · Au rivage : 0 an</span>
+<input type="range" id="urSl" min="0" max="3" step="1" value="0" aria-label="Années passées au palais du dragon"></label>
+<button class="btn hide" id="urBox">Ouvrir la boîte</button>
+<button class="btn ghost hide" id="urReset">Revenir au rivage</button>
+<button class="btn ghost" data-goto="7">Récit suivant</button>
+</div>
+</div>
+<div class="cvs noswipe rv" style="--d:.3s"><canvas id="urc" role="img" aria-label="Un rivage où les années défilent : un arbre grandit, une cabane s'effondre, et une boîte laisse échapper une fumée blanche"></canvas></div>
+</div>
+</section>
+
+<!-- ============ 4 · YOKAI ============ -->
+<section class="ch" id="c3" aria-label="Quatre masques de yōkai">
+<span class="kan wm" aria-hidden="true">妖</span>
+<div class="wrap col rev">
+<div class="head2">
+<div>
+<p class="eyebrow rv" style="--d:.1s">Chapitre 8 &nbsp;·&nbsp; <span class="kan">妖</span> &nbsp;·&nbsp; Yōkai</p>
+<h2 class="h2 rvw" style="--d:.2s">Quatre masques</h2>
+</div>
+<p class="lead rv" style="--d:.4s">Dans le folklore japonais, les yōkai sont des esprits, des monstres et des prodiges. Clique sur un masque pour déplier son rouleau.</p>
+</div>
+<div class="car noswipe rv" style="--d:.5s" id="car">
+<div class="track" id="track">
+
+<button class="tile" data-y="0" aria-label="Kitsune, le renard">
+<span class="kan bk" aria-hidden="true">狐</span>
+<svg viewBox="0 0 300 340" aria-hidden="true"><g class="mk">
+<path d="M62 126 L38 18 L124 72 Z" class="mf ms"></path>
+<path d="M238 126 L262 18 L176 72 Z" class="mf ms"></path>
+<path d="M150 330 C 120 330 40 222 40 152 C 40 102 90 72 150 72 C 210 72 260 102 260 152 C 260 222 180 330 150 330 Z" class="mf ms"></path>
+<path d="M76 152 Q 104 128 130 154 Q 104 162 76 152Z" class="mi"></path>
+<path d="M224 152 Q 196 128 170 154 Q 196 162 224 152Z" class="mi"></path>
+<path d="M136 264 Q150 250 164 264 Q 150 274 136 264Z" class="mi"></path>
+<path d="M150 84 L150 130 M62 188 Q 92 200 112 238 M238 188 Q 208 200 188 238 M52 172 L 96 194 M248 172 L 204 194" class="mr"></path>
+</g></svg>
+<span class="tl"><span class="eyebrow">01 · Le renard</span><span class="h3">Kitsune</span></span>
+</button>
+
+<button class="tile" data-y="1" aria-label="Oni, l'ogre">
+<span class="kan bk" aria-hidden="true">鬼</span>
+<svg viewBox="0 0 300 340" aria-hidden="true"><g class="mk">
+<path d="M78 104 Q 54 46 96 8 Q 98 62 126 92 Z" class="mi"></path>
+<path d="M222 104 Q 246 46 204 8 Q 202 62 174 92 Z" class="mi"></path>
+<path d="M44 160 C 44 90 104 66 150 66 C 196 66 256 90 256 160 C 256 250 210 308 150 308 C 90 308 44 250 44 160Z" class="mf ms"></path>
+<path d="M60 124 L 138 154 L 128 172 L 58 146Z" class="mi"></path>
+<path d="M240 124 L 162 154 L 172 172 L 242 146Z" class="mi"></path>
+<circle cx="100" cy="184" r="15" class="mf ms"></circle><circle cx="100" cy="184" r="6" class="mi"></circle>
+<circle cx="200" cy="184" r="15" class="mf ms"></circle><circle cx="200" cy="184" r="6" class="mi"></circle>
+<path d="M138 214 Q 150 206 162 214 L 158 232 L 142 232Z" class="mi"></path>
+<path d="M84 250 Q 150 286 216 250 Q 150 264 84 250Z" class="mi"></path>
+<path d="M100 256 L 108 286 L 122 262Z" class="mf ms"></path>
+<path d="M200 256 L 192 286 L 178 262Z" class="mf ms"></path>
+<path d="M150 70 L 150 100" class="mr"></path>
+</g></svg>
+<span class="tl"><span class="eyebrow">02 · L'ogre</span><span class="h3">Oni</span></span>
+</button>
+
+<button class="tile" data-y="2" aria-label="Tengu, l'esprit de la montagne">
+<span class="kan bk" aria-hidden="true">天狗</span>
+<svg viewBox="0 0 300 340" aria-hidden="true"><g class="mk">
+<path d="M108 80 L192 80 L184 38 L116 38 Z" class="mi"></path>
+<path d="M150 308 C 76 296 42 230 42 164 C 42 108 92 78 150 78 C 208 78 258 108 258 164 C 258 230 224 296 150 308Z" class="mf ms"></path>
+<path d="M60 142 Q 100 108 140 146" class="ms mr0"></path>
+<path d="M240 142 Q 200 108 160 146" class="ms mr0"></path>
+<circle cx="102" cy="160" r="11" class="mf ms"></circle><circle cx="102" cy="160" r="5" class="mi"></circle>
+<circle cx="198" cy="160" r="11" class="mf ms"></circle><circle cx="198" cy="160" r="5" class="mi"></circle>
+<path d="M126 176 Q 150 158 174 176 L 162 316 Q 150 332 138 316Z" class="mr mrf"></path>
+<path d="M54 196 Q 40 230 58 262 M246 196 Q 260 230 242 262" class="ms mr0"></path>
+</g></svg>
+<span class="tl"><span class="eyebrow">03 · Esprit de montagne</span><span class="h3">Tengu</span></span>
+</button>
+
+<button class="tile" data-y="3" aria-label="Kappa, l'esprit des rivières">
+<span class="kan bk" aria-hidden="true">河童</span>
+<svg viewBox="0 0 300 340" aria-hidden="true"><g class="mk">
+<ellipse cx="150" cy="176" rx="108" ry="104" class="mf ms"></ellipse>
+<ellipse cx="150" cy="82" rx="52" ry="17" class="mi"></ellipse>
+<ellipse cx="150" cy="79" rx="38" ry="9" class="mf"></ellipse>
+<path d="M92 92 L 70 110 M208 92 L 230 110 M110 100 L 98 124 M190 100 L 202 124" class="ms mr0"></path>
+<circle cx="106" cy="160" r="24" class="mf ms"></circle><circle cx="106" cy="162" r="10" class="mi"></circle>
+<circle cx="194" cy="160" r="24" class="mf ms"></circle><circle cx="194" cy="162" r="10" class="mi"></circle>
+<path d="M100 216 Q 150 198 200 216 Q 202 268 150 272 Q 98 268 100 216Z" class="mi"></path>
+<path d="M118 232 Q 150 224 182 232" class="mf2"></path>
+</g></svg>
+<span class="tl"><span class="eyebrow">04 · Esprit des rivières</span><span class="h3">Kappa</span></span>
+</button>
+
+</div>
+<div class="carnav">
+<button class="cbtn" id="cprev" aria-label="Masque précédent">←</button>
+<button class="cbtn" id="cnext" aria-label="Masque suivant">→</button>
+</div>
+</div>
+</div>
+
+</section>
+
+<!-- ============ 5 · CENT BOUGIES ============ -->
+<section class="ch" id="c4" aria-label="Cent bougies">
+<span class="kan wm" aria-hidden="true">百</span>
+<div class="glow" id="glow" aria-hidden="true"></div>
+<div class="wrap g2 rev">
+<div class="txt">
+<p class="eyebrow rv" style="--d:.1s">Chapitre 9 &nbsp;·&nbsp; <span class="kan">百</span> &nbsp;·&nbsp; Hyakumonogatari</p>
+<h2 class="h2 rvw" style="--d:.2s">Cent<br>bougies</h2>
+<div class="swap rv" style="--d:.45s" id="candText">
+<div class="st show" data-s="0">
+<p class="lead">À l'époque d'Edo, on jouait à raconter cent histoires de fantômes dans une pièce éclairée par cent bougies. Après chaque récit, on en soufflait une. On dit que lorsque la dernière s'éteignait, un esprit apparaissait.</p>
+<p class="hint">Souffle les bougies une à une, ou laisse la prochaine histoire le faire.</p>
+</div>
+<div class="st" data-s="1">
+<p class="lead big2">Quelque chose est apparu.</p>
+<p class="hint">Les cent récits sont racontés.</p>
+</div>
+</div>
+<div class="row rv" style="--d:.65s">
+<span class="counter" id="candCount" aria-live="polite">0 / 100 histoires</span>
+<button class="btn" id="tellBtn">Raconter une histoire</button>
+<button class="btn ghost hide" id="relightBtn">Rallumer les bougies</button>
+<button class="btn ghost" data-goto="0">Retour à l'ouverture</button>
+</div>
+</div>
+<div class="candwrap noswipe rv" style="--d:.3s">
+<div class="cgrid" id="cgrid"></div>
+<svg class="eye" id="eye" viewBox="0 0 300 160" aria-hidden="true">
+<g filter="url(#rough)" fill="none" stroke="#ECEAE5" stroke-linecap="round">
+<path d="M10 80 Q150 -22 290 80 Q150 182 10 80Z" stroke-width="6"></path>
+<circle cx="150" cy="80" r="40" fill="#ECEAE5" stroke="none"></circle>
+<ellipse cx="150" cy="80" rx="7" ry="30" fill="#060606" stroke="none"></ellipse>
+<path d="M58 40 L44 18 M96 26 L88 2 M150 18 L150 -6 M204 26 L212 2 M242 40 L256 18" stroke-width="4"></path>
+</g>
+</svg>
+</div>
+</div>
+</section>
+
+</main>
+
+<div class="shade" id="shade"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Rouleau du yōkai">
+<button class="x" id="dclose" aria-label="Refermer le rouleau">×</button>
+<div class="dmask" id="dmask"></div>
+<p class="eyebrow" id="deye">—</p>
+<h3 class="h2 dh" id="dtitle">—</h3>
+<p class="lead dp" id="dtext">—</p>
+</aside>
+
+<nav class="dock" aria-label="Chapitres">
+<button class="cbtn" id="prevCh" aria-label="Chapitre précédent">←</button>
+<div class="dots" id="dots">
+<button class="dot on" data-goto="0" aria-label="Chapitre 1 : ouverture" aria-current="true"><span class="kan">序</span><span class="dl">Ouverture</span></button>
+<button class="dot" data-goto="1" aria-label="Chapitre 2 : la grotte du soleil" aria-current="false"><span class="kan">日</span><span class="dl">Amaterasu</span></button>
+<button class="dot" data-goto="2" aria-label="Chapitre 3 : le serpent à huit têtes" aria-current="false"><span class="kan">蛇</span><span class="dl">Orochi</span></button>
+<button class="dot" data-goto="3" aria-label="Chapitre 4 : la princesse du bambou" aria-current="false"><span class="kan">竹</span><span class="dl">Kaguya</span></button>
+<button class="dot" data-goto="4" aria-label="Chapitre 5 : le renard à neuf queues" aria-current="false"><span class="kan">狐</span><span class="dl">Kitsune</span></button>
+<button class="dot" data-goto="5" aria-label="Chapitre 6 : Tanabata" aria-current="false"><span class="kan">星</span><span class="dl">Tanabata</span></button>
+<button class="dot" data-goto="6" aria-label="Chapitre 7 : Urashima Tarō" aria-current="false"><span class="kan">浦</span><span class="dl">Urashima</span></button>
+<button class="dot" data-goto="7" aria-label="Chapitre 8 : quatre masques" aria-current="false"><span class="kan">妖</span><span class="dl">Yōkai</span></button>
+<button class="dot" data-goto="8" aria-label="Chapitre 9 : cent bougies" aria-current="false"><span class="kan">百</span><span class="dl">Bougies</span></button>
+</div>
+<button class="cbtn" id="nextCh" aria-label="Chapitre suivant">→</button>
+</nav>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.prototype.slice.call(r.querySelectorAll(s));
+const TAU = Math.PI * 2, rnd = Math.random;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const eoc = (t) => 1 - Math.pow(1 - t, 3);
+const eoq = (t) => 1 - Math.pow(1 - t, 4);
+const eob = (t) => { const c = 1.70158; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+const gauss = () => { let u = 0; for (let i = 0; i < 4; i++) u += rnd(); return (u - 2) / 0.58; };
+const reduced = /[?&]calme\b/.test(location.search);
+
+let W = innerWidth, H = innerHeight, DPR = Math.min(2, window.devicePixelRatio || 1);
+
+/* =====================================================================
+   SON (WebAudio, coupé par défaut)
+   ===================================================================== */
+const Snd = {
+  on: false, ctx: null,
+  init() {
+    if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { this.ctx = null; } }
+    if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+  },
+  noise(dur) {
+    const c = this.ctx, b = c.createBuffer(1, Math.floor(c.sampleRate * dur), c.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const s = c.createBufferSource(); s.buffer = b; return s;
+  },
+  splash(v) {
+    if (!this.on || !this.ctx) return; v = v || 1;
+    const c = this.ctx, t = c.currentTime;
+    const n = this.noise(0.3), f = c.createBiquadFilter(), g = c.createGain();
+    f.type = 'bandpass'; f.Q.value = 0.9; f.frequency.setValueAtTime(2000, t); f.frequency.exponentialRampToValueAtTime(380, t + 0.22);
+    g.gain.setValueAtTime(0.2 * v, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.26);
+    n.connect(f); f.connect(g); g.connect(c.destination); n.start(t);
+    const o = c.createOscillator(), og = c.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(280, t); o.frequency.exponentialRampToValueAtTime(64, t + 0.2);
+    og.gain.setValueAtTime(0.18 * v, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.24);
+    o.connect(og); og.connect(c.destination); o.start(t); o.stop(t + 0.3);
+  },
+  crack() {
+    if (!this.on || !this.ctx) return;
+    const c = this.ctx, t = c.currentTime, n = this.noise(0.5), f = c.createBiquadFilter(), g = c.createGain();
+    f.type = 'highpass'; f.frequency.value = 1500;
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.32, t + 0.015); g.gain.exponentialRampToValueAtTime(0.001, t + 0.42);
+    n.connect(f); f.connect(g); g.connect(c.destination); n.start(t);
+    const o = c.createOscillator(), og = c.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(120, t); o.frequency.exponentialRampToValueAtTime(38, t + 0.35);
+    og.gain.setValueAtTime(0.34, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+    o.connect(og); og.connect(c.destination); o.start(t); o.stop(t + 0.45);
+  },
+  whoosh() {
+    if (!this.on || !this.ctx) return;
+    const c = this.ctx, t = c.currentTime, n = this.noise(1.8), f = c.createBiquadFilter(), g = c.createGain();
+    f.type = 'lowpass'; f.Q.value = 1.2;
+    f.frequency.setValueAtTime(220, t); f.frequency.exponentialRampToValueAtTime(3400, t + 0.75); f.frequency.exponentialRampToValueAtTime(260, t + 1.8);
+    g.gain.setValueAtTime(0.001, t); g.gain.linearRampToValueAtTime(0.3, t + 0.5); g.gain.exponentialRampToValueAtTime(0.001, t + 1.8);
+    n.connect(f); f.connect(g); g.connect(c.destination); n.start(t);
+  }
+};
+
+/* =====================================================================
+   ÉCLABOUSSURES
+   Chaque splat est asymétrique : une direction dominante, des tentacules à
+   longueur variable, des gouttes projetées et des coulures.
+   ===================================================================== */
+/* =====================================================================
+   CURSEUR : un rond d'encre qui inverse le contraste autour du pointeur.
+   Le canvas est en mode "difference" : le rond blanc devient noir sur le blanc
+   et blanc sur le noir. Au clic il gonfle, et un anneau fin se propage.
+   ===================================================================== */
+const Fx = {
+  cv: $('#fx'), ctx: null, x: -200, y: -200, tx: -200, ty: -200, vis: 0, want: 0, pulse: 0, hold: 0, ph: [], rings: [], lt: 0, touchT: 0,
+  noise: (() => { const a = []; for (let i = 0; i < 6; i++) a.push({ k: 2 + i, p: rnd() * TAU, s: 0.0006 + rnd() * 0.0012, m: 1 / (i + 2.4) }); return a; })(),
+  move(x, y) { this.tx = x; this.ty = y; if (this.vis < 0.05 && this.x < -100) { this.x = x; this.y = y; } this.want = 1; },
+  leave() { this.want = 0; },
+  splat(x, y, o) {
+    o = o || {}; const big = clamp(40 + (o.R || 22) * 1.1, 46, 130);
+    this.rings.push({ x, y, t0: performance.now(), R: big });
+    if (this.rings.length > 10) this.rings.shift();
+    if (!o.quiet) { this.pulse = 1; this.tx = x; this.ty = y; if (this.touch) { this.x = x; this.y = y; this.want = 1; this.touchT = performance.now() + 650; } }
+  },
+  frame(now) {
+    const c = this.ctx, dt = Math.min(0.05, (now - (this.lt || now)) / 1000); this.lt = now;
+    c.clearRect(0, 0, W, H);
+    const f = 1 - Math.pow(0.0006, dt); this.x += (this.tx - this.x) * f; this.y += (this.ty - this.y) * f;
+    if (this.touch && now > this.touchT) this.want = 0;
+    this.vis += (this.want - this.vis) * Math.min(1, dt * 10);
+    this.pulse = Math.max(0, this.pulse - dt * 2.4);
+    for (let i = this.rings.length - 1; i >= 0; i--) {
+      const r = this.rings[i], k = clamp((performance.now() - r.t0) / 900, 0, 1); if (k >= 1) { this.rings.splice(i, 1); continue; }
+      c.globalAlpha = (1 - k) * 0.95; c.strokeStyle = '#fff'; c.lineWidth = 0.8 + 2.4 * (1 - k);
+      c.beginPath(); c.arc(r.x, r.y, Math.max(0.5, 14 + r.R * eoc(k)), 0, TAU); c.stroke();
+    }
+    if (this.vis > 0.02) {
+      const base = (reduced ? 22 : 26) + 20 * eob(clamp(this.pulse, 0, 1)) * (this.pulse > 0 ? 1 : 0), N = 30, pts = [];
+      const sp = Math.hypot(this.tx - this.x, this.ty - this.y), st = clamp(sp * 0.012, 0, 0.35), ang = Math.atan2(this.ty - this.y, this.tx - this.x);
+      for (let i = 0; i < N; i++) {
+        const th = i / N * TAU; let n = 0; for (const q of this.noise) n += q.m * Math.sin(q.k * th + q.p + now * q.s * 6);
+        const r = base * (1 + 0.1 * n) * (1 + st * Math.cos(th - ang));
+        pts.push([this.x + Math.cos(th) * r, this.y + Math.sin(th) * r]);
+      }
+      c.globalAlpha = this.vis; c.fillStyle = '#fff';
+      c.beginPath(); c.moveTo((pts[N - 1][0] + pts[0][0]) / 2, (pts[N - 1][1] + pts[0][1]) / 2);
+      for (let i = 0; i < N; i++) { const p = pts[i], q = pts[(i + 1) % N]; c.quadraticCurveTo(p[0], p[1], (p[0] + q[0]) / 2, (p[1] + q[1]) / 2); }
+      c.closePath(); c.fill();
+    }
+    c.globalAlpha = 1;
+  }
+};
+document.documentElement.addEventListener('mouseleave', () => { if (!Fx.touch) Fx.leave(); });
+window.addEventListener('blur', () => Fx.leave());
+
+/* =====================================================================
+   JET D'ENCRE PLEINE PAGE (transition de chapitre)
+   Deux couches : un voile gris (l'encre qui bave) et l'encre blanche.
+   ===================================================================== */
+const jetA = $('#jetA'), jetB = $('#jetB'), ja = jetA.getContext('2d'), jb = jetB.getContext('2d'), bfx = $('#brushfx'), bf = bfx.getContext('2d');
+let JD = 1;
+function resize() {
+  DPR = Math.min(2, window.devicePixelRatio || 1); JD = Math.min(DPR, 1.25);
+  W = innerWidth; H = innerHeight;
+  Fx.cv.width = Math.round(W * DPR); Fx.cv.height = Math.round(H * DPR);
+  Fx.cv.style.width = W + 'px'; Fx.cv.style.height = H + 'px';
+  Fx.ctx = Fx.cv.getContext('2d'); Fx.ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  for (const [cv, cx] of [[jetA, ja], [jetB, jb], [bfx, bf]]) {
+    cv.width = Math.round(W * JD); cv.height = Math.round(H * JD);
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    cx.setTransform(JD, 0, 0, JD, 0, 0);
+  }
+  views.forEach((v) => v.resize());
+}
+
+function noiseFn() {
+  const n = 7, am = [], ph = []; let sum = 0;
+  for (let k = 0; k < n; k++) { am.push((0.5 + rnd()) / (k + 2) * 1.8); ph.push(rnd() * TAU); sum += am[k]; }
+  return (th) => { let s = 0; for (let k = 0; k < n; k++) s += am[k] * Math.cos((k + 2) * th + ph[k]); return s / sum * 0.5 + 0.5; };
+}
+function smoothPath(ctx, pts) {
+  const n = pts.length;
+  ctx.beginPath(); ctx.moveTo((pts[n - 1][0] + pts[0][0]) / 2, (pts[n - 1][1] + pts[0][1]) / 2);
+  for (let i = 0; i < n; i++) { const p = pts[i], q = pts[(i + 1) % n]; ctx.quadraticCurveTo(p[0], p[1], (p[0] + q[0]) / 2, (p[1] + q[1]) / 2); }
+  ctx.closePath();
+}
+function blob(ctx, cx, cy, Rf, t, nf, df, jit, pad, lead, dm) {
+  const M = jit.length, pts = [], dk = dm || 0.34;
+  for (let j = 0; j < M; j++) {
+    const th = j / M * TAU, d = df(th) * dk, tj = clamp((t + lead - d) / (1 - d), 0, 1);
+    const r = (Rf * eoc(tj) * (1 + 0.38 * nf(th)) + pad * tj) * (1 + 0.045 * jit[j]);
+    pts.push([cx + Math.cos(th) * r, cy + Math.sin(th) * r]);
+  }
+  smoothPath(ctx, pts); ctx.fill();
+}
+function makeJit(M) {
+  const raw = []; for (let i = 0; i < M; i++) raw.push(rnd() * 2 - 1);
+  return raw.map((v, i) => (v * 2 + raw[(i + 1) % M] + raw[(i + M - 1) % M]) / 4);
+}
+function makeStreams(Rf) {
+  const S = [], main = rnd() * TAU, n = 11;
+  for (let i = 0; i < n; i++) {
+    const drops = []; for (let k = 0; k < 7; k++) drops.push({ f: 0.35 + rnd() * 0.9, l: (rnd() - 0.5) * 90, r: 3 + rnd() * 11 });
+    S.push({ a: rnd() < 0.65 ? main + gauss() * 0.85 : rnd() * TAU, L: Rf * (0.5 + 0.75 * rnd()), w: 34 + rnd() * 70, amp: 16 + rnd() * 40, fr: 1.5 + rnd() * 3, ph: rnd() * TAU, sp: 0.42 + rnd() * 0.2, drops });
+  }
+  return S;
+}
+function drawStream(ctx, s, ox, oy, t, wm, lm) {
+  const p = eoq(clamp(t / s.sp, 0, 1)); if (p <= 0.001) return;
+  const L = s.L * lm * p, dx = Math.cos(s.a), dy = Math.sin(s.a), px = -dy, py = dx, N = 14, Lp = [], Rp = [];
+  for (let i = 0; i <= N; i++) {
+    const f = i / N, off = s.amp * Math.sin(s.fr * f * TAU + s.ph) * f;
+    const cx = ox + dx * L * f + px * off, cy = oy + dy * L * f + py * off;
+    const hw = (s.w * wm / 2) * Math.pow(1 - f, 0.8) + 2;
+    Lp.push([cx + px * hw, cy + py * hw]); Rp.push([cx - px * hw, cy - py * hw]);
+  }
+  ctx.beginPath(); ctx.moveTo(Lp[0][0], Lp[0][1]);
+  for (let i = 1; i <= N; i++) ctx.lineTo(Lp[i][0], Lp[i][1]);
+  for (let i = N; i >= 0; i--) ctx.lineTo(Rp[i][0], Rp[i][1]);
+  ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.arc(ox, oy, s.w * wm * 0.55, 0, TAU); ctx.fill();
+  for (const d of s.drops) {
+    if (L < s.L * lm * d.f * 0.72) continue;
+    const q = eoc(clamp((t - s.sp * d.f * 0.6) / 0.5, 0, 1)), dist = s.L * lm * d.f * q;
+    ctx.beginPath(); ctx.arc(ox + dx * dist + px * d.l * q, oy + dy * dist + py * d.l * q, d.r * q * wm, 0, TAU); ctx.fill();
+  }
+}
+
+/* =====================================================================
+   TRANSITION : UN COUP DE PINCEAU
+   1. L'encre blanche traverse l'écran d'un seul geste (bord irrégulier, fines
+      gouttelettes devant le pinceau).
+   2. Un trait noir la traverse à son tour : on voit le noir sur le blanc, et
+      derrière lui le nouveau chapitre apparaît.
+   ===================================================================== */
+function runBrush(ox, oy, dir, onCover, onDone) {
+  if (reduced) { onCover(); setTimeout(onDone, 240); return; }
+  const ang = (rnd() - 0.5) * 0.16 + (oy / H - 0.5) * 0.1;
+  const Uw = W + Math.abs(ang) * H + 160, Vh = H + Math.abs(ang) * W + 160, RH = 3, rows = Math.ceil(Vh / RH);
+  const mkLag = (amp, cnt, sa) => {
+    const ph = [rnd() * TAU, rnd() * TAU, rnd() * TAU, rnd() * TAU], out = new Float32Array(rows);
+    for (let j = 0; j < rows; j++) out[j] = (0.5 + 0.5 * (Math.sin(j * 0.03 + ph[0]) * 0.5 + Math.sin(j * 0.085 + ph[1]) * 0.3 + Math.sin(j * 0.21 + ph[2]) * 0.14 + Math.sin(j * 0.7 + ph[3]) * 0.06)) * amp;
+    for (let q = 0; q < cnt; q++) {
+      const jc = Math.floor(rnd() * rows), hh = 2 + rnd() * 6, v = Math.pow(rnd(), 1.6) * sa;
+      for (let k = -Math.ceil(hh); k <= Math.ceil(hh); k++) { const j = jc + k; if (j >= 0 && j < rows) out[j] += v * Math.pow(Math.max(0, 1 - Math.abs(k) / hh), 1.4); }
+    }
+    return out;
+  };
+  const aH = 0.07 * Uw, sH = 0.075 * Uw, L = aH + sH + 4;
+  const lagW = mkLag(aH, 36, sH), lagK = mkLag(aH * 0.9, 38, sH), lagT = mkLag(aH * 1.1, 46, sH * 1.1);
+  const bandW = 0.36 * Uw;
+  const spray = (n, nBig, far) => {
+    const a = [];
+    for (let i = 0; i < n; i++) a.push({ off: 8 + Math.pow(rnd(), 2) * far * 0.8, v: rnd() * Vh, r: 0.5 + Math.pow(rnd(), 3) * 2.2 });
+    for (let i = 0; i < nBig; i++) a.push({ off: 20 + Math.pow(rnd(), 1.4) * far, v: rnd() * Vh, r: 2.4 + rnd() * 2.8 });
+    return a;
+  };
+  const spW = spray(150, 9, 300), spK = spray(190, 12, 340);
+  const dry = []; for (let i = 0; i < 46; i++) dry.push({ j: Math.floor(rnd() * rows), len: 0.08 * Uw + rnd() * 0.3 * Uw, a: 0.035 + rnd() * 0.07 });
+  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const TA = 540, TH = 60, TB = 980, WHITE = '#ECEAE5', BLACK = '#050505';
+  const frameT = (c) => { c.setTransform(JD, 0, 0, JD, 0, 0); if (dir < 0) { c.translate(W, 0); c.scale(-1, 1); } c.translate(W / 2, H / 2); c.rotate(ang); c.translate(-Uw / 2, -Vh / 2); };
+  const dots = (c, arr, pos, lag) => { for (const s of arr) { const j = Math.min(rows - 1, Math.floor(s.v / RH)), u = pos + lag[j] + s.off; if (u > Uw + 4) continue; c.beginPath(); c.arc(u, s.v, s.r, 0, TAU); c.fill(); } };
+  const t0 = performance.now(); let phase = 0, tp = 0;
+  function frame(now) {
+    if (phase === 0) {
+      const t = clamp((now - t0) / TA, 0, 1), pos = lerp(-L, Uw, ease(t));
+      ja.setTransform(1, 0, 0, 1, 0, 0); ja.clearRect(0, 0, ja.canvas.width, ja.canvas.height);
+      frameT(ja); ja.fillStyle = WHITE;
+      for (let j = 0; j < rows; j++) { const x = pos + lagW[j]; if (x > 0) ja.fillRect(0, j * RH, Math.min(x, Uw), RH + 0.7); }
+      dots(ja, spW, pos, lagW);
+      if (t >= 1) {
+        ja.setTransform(1, 0, 0, 1, 0, 0); ja.fillStyle = WHITE; ja.fillRect(0, 0, ja.canvas.width, ja.canvas.height);
+        try { onCover(); } catch (e) { console.error(e); }
+        phase = 1; tp = now;
+      }
+      requestAnimationFrame(frame); return;
+    }
+    if (phase === 1) { if (now - tp < TH) { requestAnimationFrame(frame); return; } phase = 2; tp = now; }
+    const t = clamp((now - tp) / TB, 0, 1), pos = lerp(-L, Uw + bandW + 6, ease(t));
+    ja.setTransform(1, 0, 0, 1, 0, 0); ja.globalCompositeOperation = 'source-over'; ja.fillStyle = WHITE; ja.fillRect(0, 0, ja.canvas.width, ja.canvas.height);
+    frameT(ja); ja.globalCompositeOperation = 'destination-out'; ja.fillStyle = '#000';
+    for (let j = 0; j < rows; j++) { const x = pos + lagK[j] - 16; if (x > 0) ja.fillRect(-4, j * RH, Math.min(x, Uw) + 4, RH + 0.7); }
+    ja.globalCompositeOperation = 'source-over';
+    jb.setTransform(1, 0, 0, 1, 0, 0); jb.clearRect(0, 0, jb.canvas.width, jb.canvas.height);
+    frameT(jb); jb.fillStyle = BLACK;
+    for (let j = 0; j < rows; j++) {
+      const h = pos + lagK[j], tl = pos - bandW + lagT[j];
+      if (h <= 0 || tl >= Uw) continue;
+      const a = Math.max(0, tl), b = Math.min(Uw, h); if (b > a) jb.fillRect(a, j * RH, b - a, RH + 0.7);
+    }
+    dots(jb, spK, pos, lagK);
+    jb.fillStyle = '#fff';
+    for (const d of dry) { const h = pos + lagK[d.j]; if (h < 0) continue; jb.globalAlpha = d.a; jb.fillRect(Math.max(0, h - d.len), d.j * RH, Math.min(d.len, h), 1.3); }
+    jb.globalAlpha = 1;
+    if (t >= 1) {
+      ja.setTransform(1, 0, 0, 1, 0, 0); ja.clearRect(0, 0, ja.canvas.width, ja.canvas.height);
+      jb.setTransform(1, 0, 0, 1, 0, 0); jb.clearRect(0, 0, jb.canvas.width, jb.canvas.height);
+      onDone(); return;
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+/* =====================================================================
+   ÉPÉE : KEN À POMMEAU SANKOSHO (lame droite, double tranchant, halo discret)
+   Rendu 3D logiciel sur canvas, acier mat, aura qui scintille doucement.
+   ===================================================================== */
+function buildKen() {
+  const V = [], F = [], twk = [];
+  const ringY = (y, pts, dx, dyf) => pts.map((p) => { V.push([p[0] + (dx || 0), y + (dyf ? dyf(p[0]) : 0), p[1]]); return V.length - 1; });
+  const ell = (a, b, n) => { const r = []; for (let i = 0; i < n; i++) { const t = i / n * TAU; r.push([a * Math.cos(t), b * Math.sin(t)]); } return r; };
+  const sq = (a, b, n, e) => { const r = []; for (let i = 0; i < n; i++) { const t = i / n * TAU, c = Math.cos(t), s = Math.sin(t); r.push([a * Math.sign(c) * Math.pow(Math.abs(c), 2 / e), b * Math.sign(s) * Math.pow(Math.abs(s), 2 / e)]); } return r; };
+  const cen = (idx) => { const c = [0, 0, 0]; idx.forEach((i) => { c[0] += V[i][0]; c[1] += V[i][1]; c[2] += V[i][2]; }); return c.map((v) => v / idx.length); };
+  const face = (idx, part, mat, ref) => {
+    let n = [0, 0, 0];
+    for (let i = 0; i < idx.length; i++) {
+      const a = V[idx[i]], b = V[idx[(i + 1) % idx.length]];
+      n[0] += (a[1] - b[1]) * (a[2] + b[2]); n[1] += (a[2] - b[2]) * (a[0] + b[0]); n[2] += (a[0] - b[0]) * (a[1] + b[1]);
+    }
+    const l = Math.hypot(n[0], n[1], n[2]); if (l < 1e-6) return;
+    n = [n[0] / l, n[1] / l, n[2] / l];
+    const c = cen(idx);
+    if (n[0] * (c[0] - ref[0]) + n[1] * (c[1] - ref[1]) + n[2] * (c[2] - ref[2]) < 0) n = [-n[0], -n[1], -n[2]];
+    F.push({ i: idx, part, mat, n, id: F.length });
+  };
+  const strip = (A, B, part, mf) => { const ref = cen(A.concat(B)); for (let i = 0; i < A.length; i++) { const j = (i + 1) % A.length; face([A[i], A[j], B[j], B[i]], part, mf(i), ref); } };
+  const cap = (A, part, mat, d) => { const c = cen(A); face(A, part, mat, [c[0] - d[0] * 10, c[1] - d[1] * 10, c[2] - d[2] * 10]); };
+  /* tube suivant une courbe dans le plan xy */
+  const tubeXY = (path, rad, part, mat, n) => {
+    const rings = path.map((p, k) => {
+      const q = path[Math.min(k + 1, path.length - 1)], o = path[Math.max(k - 1, 0)];
+      let tx = q[0] - o[0], ty = q[1] - o[1]; const tl = Math.hypot(tx, ty) || 1; tx /= tl; ty /= tl;
+      const nx = -ty, ny = tx, r = rad[k], ring = [];
+      for (let m = 0; m < n; m++) { const ph = m / n * TAU; V.push([p[0] + nx * r * Math.cos(ph), p[1] + ny * r * Math.cos(ph), r * Math.sin(ph)]); ring.push(V.length - 1); }
+      return ring;
+    });
+    for (let k = 0; k < rings.length - 1; k++) strip(rings[k], rings[k + 1], part, () => mat);
+    const last = path.length - 1, tt = [path[last][0] - path[last - 1][0], path[last][1] - path[last - 1][1]], tl = Math.hypot(tt[0], tt[1]) || 1;
+    cap(rings[last], part, mat, [tt[0] / tl, tt[1] / tl, 0]);
+    twk.push(rings[last][0]);
+  };
+
+  // 0 · pommeau sankosho : trois pointes, la centrale droite, les deux autres recourbées
+  const CP = [[-196, 18], [-206, 17], [-222, 12.5], [-240, 8], [-256, 4], [-268, 1.2]].map((r) => ringY(r[0], ell(r[1], r[1] * 0.78, 8)));
+  for (let k = 0; k < CP.length - 1; k++) strip(CP[k], CP[k + 1], 0, () => 'metal');
+  cap(CP[CP.length - 1], 0, 'metal', [0, -1, 0]); twk.push(CP[CP.length - 1][0]);
+  for (const sg of [-1, 1]) {
+    const path = [], rad = [], K = 11;
+    for (let k = 0; k <= K; k++) { const s = k / K; path.push([sg * (13 + 36 * Math.sin(Math.PI * s * 0.96) + 8 * s), -200 - 72 * s + 6 * Math.sin(Math.PI * s)]); rad.push(9 * Math.pow(1 - s, 0.62) + 1.3); }
+    tubeXY(path, rad, 0, 'metal', 8);
+  }
+  // 1 · poignée enroulée, collier de tête et de garde
+  const KS = [[-198, 24, 18], [-190, 26, 19.5], [-182, 24, 18]].map((r) => ringY(r[0], ell(r[1], r[2], 10)));
+  for (let k = 0; k < 2; k++) strip(KS[k], KS[k + 1], 1, () => 'metal');
+  cap(KS[0], 1, 'metal', [0, -1, 0]);
+  const GR = [];
+  for (let k = 0; k <= 9; k++) { const u = k / 9, b = Math.sin(Math.PI * u); GR.push(ringY(-182 + k * 17, ell(19 + 4 * b, 14.5 + 3 * b, 8))); }
+  for (let k = 0; k < 9; k++) strip(GR[k], GR[k + 1], 1, (i) => ((i + k) % 2 ? 'wrapB' : 'wrapA'));
+  const CO = [[-29, 22, 17], [-23, 25, 19], [-17, 23, 17.5]].map((r) => ringY(r[0], ell(r[1], r[2], 10)));
+  for (let k = 0; k < 2; k++) strip(CO[k], CO[k + 1], 1, () => 'gold');
+  // 2 · garde losangée, relevée aux pointes
+  const a = 80, b = 31, ys = [-17, -13, -7, 5, 11, 15], sc = [0.6, 0.92, 1, 1, 0.92, 0.6], GU = [];
+  for (let k = 0; k < ys.length; k++) GU.push(ringY(ys[k], sq(a * sc[k], b * sc[k], 12, 1.55), 0, (x) => 9 * Math.pow(Math.abs(x) / a, 2)));
+  for (let k = 0; k < ys.length - 1; k++) strip(GU[k], GU[k + 1], 2, (i) => (k === 2 ? 'gold' : 'metal'));
+  cap(GU[0], 2, 'metal', [0, -1, 0]);
+  twk.push(GU[2][0], GU[2][6]);
+  // 3 · habaki doré
+  const HB = [[15, 32, 14], [22, 29, 12.5], [44, 27, 11.5], [56, 26, 10.5]].map((r) => ringY(r[0], ell(r[1], r[2], 10)));
+  for (let k = 0; k < 3; k++) strip(HB[k], HB[k + 1], 3, () => 'gold');
+  cap(HB[3], 3, 'gold', [0, 1, 0]);
+  // 4 · lame droite à double tranchant, arête centrale, pointe effilée
+  const y0 = 52, L = 560, NS = 34, BL = [], edgeIdx = [0, 4, 5, 9];
+  const bm = (i) => (edgeIdx.indexOf(i) >= 0 ? 'edge' : (i === 2 || i === 7 ? 'ridge' : 'steel'));
+  for (let k = 0; k < NS; k++) {
+    const u = k / (NS - 1), y = y0 + u * L;
+    let Wd = 31 - 6.5 * u;
+    if (u > 0.84) Wd = (31 - 6.5 * 0.84) * Math.pow(Math.cos((u - 0.84) / 0.16 * Math.PI / 2), 0.9);
+    Wd = Math.max(0.6, Wd);
+    const tz = Math.max(0.5, 10.5 * (1 - 0.35 * u)) * (u > 0.9 ? Math.max(0.15, (1 - u) / 0.1) : 1);
+    const prof = [[-Wd, 0], [-0.45 * Wd, 0.7 * tz], [-0.12 * Wd, tz], [0.12 * Wd, tz], [0.45 * Wd, 0.7 * tz], [Wd, 0], [0.45 * Wd, -0.7 * tz], [0.12 * Wd, -tz], [-0.12 * Wd, -tz], [-0.45 * Wd, -0.7 * tz]];
+    BL.push(ringY(y, prof));
+  }
+  for (let k = 0; k < BL.length - 1; k++) strip(BL[k], BL[k + 1], 4, bm);
+  for (let k = 3; k < NS; k += 3) { twk.push(BL[k][0], BL[k][5]); }
+  twk.push(BL[NS - 1][0]);
+  return { V, F, bladeFrom: BL[0][0], twk };
+}
+
+/* matériaux volontairement mats : ni chrome ni éclats, juste un acier sombre */
+const MATS = {
+  steel: { b: 0.05, d: 0.3, ks: 0.5, sh: 70, tint: [0.92, 0.96, 1.04], spk: 0 },
+  ridge: { b: 0.07, d: 0.34, ks: 0.6, sh: 50, tint: [0.94, 0.97, 1.04], spk: 0 },
+  edge: { b: 0.12, d: 0.4, ks: 0.7, sh: 34, tint: [0.96, 0.98, 1.04], spk: 0 },
+  metal: { b: 0.05, d: 0.32, ks: 0.45, sh: 40, tint: [1, 0.97, 0.93], spk: 0 },
+  gold: { b: 0.08, d: 0.4, ks: 0.5, sh: 26, tint: [1, 0.86, 0.6], spk: 0 },
+  wrapA: { b: 0.04, d: 0.36, ks: 0.08, sh: 10, tint: [1, 1, 1], spk: 0 },
+  wrapB: { b: 0.11, d: 0.42, ks: 0.08, sh: 10, tint: [1, 1, 1], spk: 0 }
+};
+const nrm = (a) => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+
+/* petit point qui scintille, avec une fine croix quand il est à son maximum */
+function twinkle(ctx, x, y, r, a) {
+  if (a <= 0.02) return;
+  ctx.globalAlpha = a * 0.55; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x, y, r * (0.8 + a * 0.5), 0, TAU); ctx.fill();
+  if (a > 0.55) {
+    const l = r * (3 + 4 * a); ctx.globalAlpha = (a - 0.4) * 0.8; ctx.strokeStyle = '#fff'; ctx.lineWidth = 0.9; ctx.beginPath();
+    ctx.moveTo(x - l, y); ctx.lineTo(x + l, y); ctx.moveTo(x, y - l); ctx.lineTo(x, y + l); ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+}
+
+class SwordView {
+  constructor(cv, isActive) {
+    this.cv = cv; this.ctx = cv.getContext('2d'); this.isActive = isActive;
+    this.angle = 40; this.vel = 0; this.drag = false; this.boost = 0; this.pops = [];
+    this.geo = buildKen();
+    this.tw = this.geo.twk.map((vi) => ({ vi, ph: rnd() * TAU, sp: 0.0012 + rnd() * 0.0028, r: 1.3 + rnd() * 1.6 }));
+    this.dust = []; for (let i = 0; i < 90; i++) this.dust.push({ r: 55 + rnd() * 290, a: rnd() * TAU, y: -330 + rnd() * 1000, sp: 5 + rnd() * 14, ph: rnd() * TAU, sz: 0.8 + rnd() * 1.7 });
+    this.w = 600; this.h = 600; this.d = 1;
+    cv.addEventListener('pointerdown', (e) => { this.drag = true; this.lx = e.clientX; this.lt = performance.now(); this.vel = 0; try { cv.setPointerCapture(e.pointerId); } catch (x) { /* */ } this.burst(0.7); });
+    cv.addEventListener('pointermove', (e) => {
+      if (!this.drag) return;
+      const now = performance.now(), dtt = Math.max(1, now - this.lt), da = (e.clientX - this.lx) * 0.6;
+      this.lx = e.clientX; this.lt = now; this.vel = 0.7 * this.vel + 0.3 * (da / dtt * 1000); this.angle += da;
+    });
+    const up = () => { this.drag = false; };
+    cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+    this.resize();
+  }
+  resize() {
+    const r = this.cv.getBoundingClientRect(); this.d = Math.min(2, window.devicePixelRatio || 1);
+    this.w = r.width || 600; this.h = r.height || 600;
+    this.cv.width = Math.round(this.w * this.d); this.cv.height = Math.round(this.h * this.d);
+  }
+  burst(p) {
+    this.boost = Math.max(this.boost, p || 1);
+    const n = Math.round(16 * (p || 1)), g = this.geo;
+    for (let i = 0; i < n; i++) this.pops.push({ vi: g.bladeFrom + Math.floor(rnd() * (g.V.length - g.bladeFrom)), t0: performance.now() + rnd() * 200, life: 600 + rnd() * 600, size: 2.2 + rnd() * 2.8 });
+  }
+  frame(now, dt) {
+    if (this.cv.clientWidth && Math.abs(this.cv.clientWidth - this.w) > 2) this.resize();
+    if (!this.drag) { if (Math.abs(this.vel) > 3) { this.angle += this.vel * dt; this.vel *= Math.pow(0.05, dt); } else this.angle += (reduced ? 0 : 24) * dt; }
+    this.angle = ((this.angle % 360) + 360) % 360;
+    this.boost = Math.max(0, this.boost - dt * 0.9);
+    this.draw(now);
+  }
+  draw(now) {
+    const ctx = this.ctx, g = this.geo, d = this.d;
+    ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, this.w, this.h);
+    const k = this.w / 940 * 1.02;
+    ctx.save(); ctx.translate(this.w / 2, this.h / 2); ctx.scale(k, k);
+    const th = this.angle * Math.PI / 180, ct = Math.cos(th), st = Math.sin(th);
+    const ph = 12 * Math.PI / 180, cp = Math.cos(ph), sp = Math.sin(ph), ro = -25 * Math.PI / 180, cr = Math.cos(ro), sr = Math.sin(ro), FOC = 2600, CY = 170;
+    const la = now * 0.0005;
+    const L1 = nrm([Math.cos(la) * 0.8, 0.55 + 0.25 * Math.sin(la * 1.7), 0.6]), L2 = nrm([-Math.cos(la * 0.8) * 0.9, 0.2, 0.2 + 0.4 * Math.sin(la)]), L3 = nrm([0.1, -0.8, 0.5]);
+    const H1 = nrm([L1[0], L1[1], L1[2] + 1]), H2 = nrm([L2[0], L2[1], L2[2] + 1]);
+    const S1 = nrm([-0.42, 0.72, 0.55]);
+    const proj = (x, y, z) => {
+      y -= CY;
+      const x1 = x * ct + z * st, z1 = -x * st + z * ct, y2 = y * cp - z1 * sp, z2 = y * sp + z1 * cp;
+      const x3 = x1 * cr - y2 * sr, y3 = x1 * sr + y2 * cr, s = FOC / (FOC - z2);
+      return [x3 * s, -y3 * s, z2];
+    };
+    const rotN = (n) => {
+      const x1 = n[0] * ct + n[2] * st, z1 = -n[0] * st + n[2] * ct, y2 = n[1] * cp - z1 * sp, z2 = n[1] * sp + z1 * cp;
+      return [x1 * cr - y2 * sr, x1 * sr + y2 * cr, z2];
+    };
+    const pv = g.V.map((v) => proj(v[0], v[1], v[2]));
+    // poussière derrière
+    const dustPts = this.dust.map((p, i) => {
+      const a = p.a + th * 0.35, yy = ((p.y - now * 0.001 * p.sp + 330) % 1000 + 1000) % 1000 - 330;
+      return { q: proj(p.r * Math.cos(a), yy, p.r * Math.sin(a)), p, i };
+    });
+    ctx.globalCompositeOperation = 'lighter';
+    for (const o of dustPts) if (o.q[2] < 0) this.dot(ctx, o, now);
+    ctx.globalCompositeOperation = 'source-over';
+    // faces visibles
+    const vis = [];
+    for (const f of g.F) {
+      const n = rotN(f.n); if (n[2] <= 0.02) continue;
+      let z = 0; for (const i of f.i) z += pv[i][2];
+      vis.push({ f, n, z: z / f.i.length });
+    }
+    vis.sort((a, b) => (a.f.part - b.f.part) || (a.z - b.z));
+    // aura : un contour doux qui respire et scintille, sans remplissage clair
+    const sil = new Path2D();
+    for (const o of vis) { const i0 = o.f.i; sil.moveTo(pv[i0[0]][0], pv[i0[0]][1]); for (let i = 1; i < i0.length; i++) sil.lineTo(pv[i0[i]][0], pv[i0[i]][1]); sil.closePath(); }
+    const tw1 = 0.5 + 0.5 * Math.sin(now * 0.0031), tw2 = 0.5 + 0.5 * Math.sin(now * 0.0083 + 1.7), tw3 = Math.pow(0.5 + 0.5 * Math.sin(now * 0.0137 + 4.1), 4);
+    const au = (0.7 + this.boost * 0.5) * (reduced ? 0.8 : 1);
+    ctx.save(); ctx.fillStyle = '#000';
+    ctx.shadowColor = 'rgba(236,234,229,' + (au * (0.34 + 0.18 * tw1)).toFixed(3) + ')'; ctx.shadowBlur = 46 * d; ctx.fill(sil);
+    ctx.shadowColor = 'rgba(244,242,237,' + (au * (0.26 + 0.2 * tw2 + 0.16 * tw3)).toFixed(3) + ')'; ctx.shadowBlur = 13 * d; ctx.fill(sil);
+    ctx.restore();
+    // faces
+    ctx.lineJoin = 'round'; ctx.lineWidth = 1.5;
+    for (const o of vis) {
+      const m = MATS[o.f.mat], n = o.n;
+      const d1 = Math.max(0, dot(n, L1)), d2 = Math.max(0, dot(n, L2)), d3 = Math.max(0, dot(n, L3));
+      let gl = m.b + m.d * (0.55 * d1 + 0.28 * d2 + 0.12 * d3);
+      const rx = 2 * n[2] * n[0], ry = 2 * n[2] * n[1], R = [rx, ry, 2 * n[2] * n[2] - 1];
+      let spec = 0.7 * Math.pow(Math.max(0, dot(n, H1)), m.sh) + 0.4 * Math.pow(Math.max(0, dot(n, H2)), m.sh * 0.6);
+      spec += 0.1 * Math.pow(Math.max(0, Math.sin(ry * 6 + rx * 3 + 0.5 + la * 3)), 14) + 0.14 * Math.pow(Math.max(0, dot(R, S1)), 12);
+      gl += m.ks * spec + 0.12 * Math.pow(1 - Math.max(0, n[2]), 3);
+      gl = Math.min(0.9, gl);
+      const col = 'rgb(' + Math.round(255 * Math.min(1, gl * m.tint[0])) + ',' + Math.round(255 * Math.min(1, gl * m.tint[1])) + ',' + Math.round(255 * Math.min(1, gl * m.tint[2])) + ')';
+      ctx.fillStyle = col; ctx.strokeStyle = col; ctx.beginPath();
+      for (let i = 0; i < o.f.i.length; i++) { const q = pv[o.f.i[i]]; if (i) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+    }
+    // poussière devant + points qui scintillent le long du fil
+    ctx.globalCompositeOperation = 'lighter';
+    for (const o of dustPts) if (o.q[2] >= 0) this.dot(ctx, o, now);
+    const boost = 1 + this.boost * 0.8;
+    for (const t of this.tw) {
+      const a = Math.pow(Math.max(0, Math.sin(now * t.sp + t.ph)), 7), q = pv[t.vi];
+      twinkle(ctx, q[0], q[1], t.r * boost, a * Math.min(1, boost * 0.9));
+    }
+    // éclats déclenchés par un clic : de simples points qui naissent et s'éteignent
+    this.pops = this.pops.filter((p) => now - p.t0 < p.life);
+    for (const p of this.pops) {
+      const a = (now - p.t0) / p.life; if (a < 0) continue;
+      const q = pv[p.vi]; twinkle(ctx, q[0], q[1], p.size, Math.sin(Math.PI * a));
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.restore();
+  }
+  dot(ctx, o, now) {
+    const tw = Math.max(0, Math.sin(now * 0.003 * (0.6 + o.p.sz * 0.3) + o.p.ph));
+    const a = 0.1 + 0.8 * Math.pow(tw, 3), z = o.q[2];
+    ctx.globalAlpha = a * (z < 0 ? 0.5 : 0.9);
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(o.q[0], o.q[1], o.p.sz, 0, TAU); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
+/* =====================================================================
+   ARRIVÉE SUR UNE PAGE : un pinceau passe sur chaque bloc de texte, du haut
+   vers le bas, et le texte apparaît derrière lui. Rapide : environ une seconde.
+   ===================================================================== */
+function revealChapter(c, delay) {
+  const els = $$('.rv,.rvw', c);
+  if (reduced) { c.classList.add('in'); return; }
+  els.forEach((e) => { e.style.opacity = ''; e.style.clipPath = 'inset(-12% 100% -12% 0)'; });
+  c.classList.add('in');
+  setTimeout(() => {
+    if (!c.classList.contains('on')) { els.forEach((e) => { e.style.clipPath = ''; e.style.opacity = ''; }); return; }
+    const items = els.map((e) => { const r = e.getBoundingClientRect(); return { e, x: r.left, y: r.top, w: r.width, h: r.height, p1: rnd() * TAU, p2: rnd() * TAU, fl: [] }; });
+    const vis = items.filter((it) => it.w > 2 && it.h > 2 && it.y < H + 30 && it.y + it.h > -30);
+    items.forEach((it) => { if (!vis.includes(it)) it.e.style.clipPath = ''; });
+    vis.sort((a, b) => (Math.round(a.y / 70) - Math.round(b.y / 70)) || (a.x - b.x));
+    const t0 = performance.now();
+    vis.forEach((it, k) => {
+      it.t0 = t0 + k * 80; it.dur = clamp(240 + it.w * 0.3, 300, 600); it.done = false; it.tall = it.h > 170;
+      if (it.tall) { it.dur = 520; it.e.style.clipPath = ''; it.e.style.opacity = '0'; }
+      for (let i = 0; i < 5; i++) it.fl.push({ y: it.y + rnd() * it.h, o: 16 + rnd() * 70, r: 0.8 + rnd() * 1.6 });
+    });
+    const BW = 84;
+    function step(now) {
+      bf.setTransform(JD, 0, 0, JD, 0, 0); bf.clearRect(0, 0, W, H);
+      let alive = false;
+      for (const it of vis) {
+        if (it.done) continue;
+        alive = true; if (now < it.t0) continue;
+        const p = clamp((now - it.t0) / it.dur, 0, 1), e = eoc(p);
+        if (it.tall) { it.e.style.opacity = e.toFixed(3); if (p >= 1) { it.done = true; it.e.style.opacity = ''; } continue; }
+        const head = it.x - 8 + (it.w + BW + 24) * e, rx = head - BW * 0.5;
+        const fr = clamp((rx - it.x) / it.w, 0, 1);
+        it.e.style.clipPath = fr >= 1 ? '' : 'inset(-12% ' + ((1 - fr) * 100).toFixed(2) + '% -12% 0)';
+        if (p >= 1) { it.done = true; it.e.style.clipPath = ''; continue; }
+        const top = it.y - 5, bot = it.y + it.h + 5, ex = (v) => 14 * (0.5 + 0.5 * Math.sin(v * 0.07 + it.p1)) + 11 * Math.pow(Math.max(0, Math.sin(v * 0.33 + it.p2)), 3);
+        bf.save(); bf.beginPath(); bf.rect(it.x - 16, top, it.w + 60, bot - top); bf.clip();
+        bf.beginPath();
+        for (let yy = top; yy <= bot + 3; yy += 3) { const x = head + ex(yy); if (yy === top) bf.moveTo(x, yy); else bf.lineTo(x, yy); }
+        for (let yy = bot; yy >= top - 3; yy -= 3) bf.lineTo(head - BW + ex(yy + 40) * 1.4, yy);
+        bf.closePath();
+        const g = bf.createLinearGradient(head - BW, 0, head + 14, 0); g.addColorStop(0, 'rgba(236,234,229,0)'); g.addColorStop(0.55, 'rgba(236,234,229,.5)'); g.addColorStop(1, 'rgba(236,234,229,.96)');
+        bf.globalAlpha = p < 0.8 ? 1 : (1 - p) / 0.2; bf.fillStyle = g; bf.fill();
+        bf.fillStyle = '#ECEAE5'; for (const f of it.fl) { bf.beginPath(); bf.arc(head + 16 + f.o * e, f.y, f.r, 0, TAU); bf.fill(); }
+        bf.restore();
+      }
+      if (alive) requestAnimationFrame(step); else bf.clearRect(0, 0, W, H);
+    }
+    requestAnimationFrame(step);
+  }, delay || 0);
+}
+
+/* =====================================================================
+   NAVIGATION ENTRE CHAPITRES
+   ===================================================================== */
+const chs = $$('.ch'), dots = $$('.dot'), NCH = chs.length;
+let cur = 0, busy = false, lastNav = 0, drawerOpen = false;
+const sw1 = new SwordView($('#sw1')), sw2 = new SwordView($('#sw2'));
+const views = [sw1, sw2];
+
+function swapTo(i) {
+  chs[cur].classList.remove('on', 'in');
+  cur = i;
+  const c = chs[i]; c.classList.add('on'); c.scrollTop = 0; void c.offsetWidth;
+  revealChapter(c, 540);
+  dots.forEach((d, k) => { d.classList.toggle('on', k === i); d.setAttribute('aria-current', k === i ? 'true' : 'false'); });
+  $('#count').textContent = String(i + 1).padStart(2, '0') + ' / ' + String(NCH).padStart(2, '0');
+  setTimeout(() => views.forEach((v) => v.resize()), 120);
+  const dd = dots[i], dp = dd && dd.parentElement; if (dp && dp.scrollWidth > dp.clientWidth + 2) dp.scrollTo({ left: dd.offsetLeft - dp.clientWidth / 2 + dd.clientWidth / 2, behavior: reduced ? 'auto' : 'smooth' });
+}
+function goto(i, ox, oy) {
+  if (busy || i < 0 || i >= NCH || i === cur) return;
+  busy = true; Snd.whoosh();
+  runBrush(ox == null ? W / 2 : ox, oy == null ? H / 2 : oy, i > cur ? 1 : -1, () => swapTo(i), () => { busy = false; lastNav = performance.now(); });
+}
+
+document.addEventListener('pointerdown', (e) => {
+  if (e.button > 0) return;
+  Snd.init();
+  Fx.touch = e.pointerType !== 'mouse'; Fx.splat(e.clientX, e.clientY);
+  Snd.splash();
+  const sw = (e.target.closest && e.target.closest('canvas')) ? 0.6 : 1;
+  if (sw < 1) views.forEach((v) => { if (v.cv === e.target) v.burst(1); });
+});
+document.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') { Fx.touch = false; Fx.move(e.clientX, e.clientY); } }, { passive: true });
+document.addEventListener('click', (e) => {
+  const g = e.target.closest && e.target.closest('[data-goto]');
+  if (!g) return;
+  const r = g.getBoundingClientRect();
+  goto(parseInt(g.getAttribute('data-goto'), 10), e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2);
+});
+$('#prevCh').addEventListener('click', (e) => { const r = e.currentTarget.getBoundingClientRect(); goto(cur - 1, r.left + r.width / 2, r.top + r.height / 2); });
+$('#nextCh').addEventListener('click', (e) => { const r = e.currentTarget.getBoundingClientRect(); goto(cur + 1, r.left + r.width / 2, r.top + r.height / 2); });
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && drawerOpen) { closeDrawer(); return; }
+  if (drawerOpen || busy) return;
+  if (e.key === 'ArrowRight') goto(cur + 1, W * 0.9, H * 0.5);
+  if (e.key === 'ArrowLeft') goto(cur - 1, W * 0.1, H * 0.5);
+});
+let wheelAcc = 0, lastWheel = 0;
+$('#stage').addEventListener('wheel', (e) => {
+  if (busy || drawerOpen) return;
+  const c = chs[cur], can = c.scrollHeight > c.clientHeight + 6;
+  const atEnd = c.scrollTop + c.clientHeight >= c.scrollHeight - 4, atTop = c.scrollTop <= 2;
+  if (can && !((e.deltaY > 0 && atEnd) || (e.deltaY < 0 && atTop))) return;
+  const now = performance.now(); if (now - lastWheel > 380) wheelAcc = 0; lastWheel = now; wheelAcc += e.deltaY;
+  if (Math.abs(wheelAcc) > 130 && now - lastNav > 900) { const d = wheelAcc > 0 ? 1 : -1; wheelAcc = 0; goto(cur + d, W * 0.5, d > 0 ? H * 0.85 : H * 0.15); }
+}, { passive: true });
+let tx = 0, ty = 0, tOK = false;
+$('#stage').addEventListener('pointerdown', (e) => { tOK = e.pointerType === 'touch' && !(e.target.closest && e.target.closest('.noswipe')); tx = e.clientX; ty = e.clientY; });
+$('#stage').addEventListener('pointerup', (e) => {
+  if (!tOK || busy || drawerOpen) return; tOK = false;
+  const dx = e.clientX - tx, dy = e.clientY - ty;
+  if (Math.abs(dx) > 80 && Math.abs(dy) < 60) goto(cur + (dx < 0 ? 1 : -1), e.clientX, e.clientY);
+});
+$('#snd').addEventListener('click', () => {
+  Snd.on = !Snd.on; if (Snd.on) Snd.init();
+  $('#snd').setAttribute('aria-pressed', String(Snd.on)); $('#sndl').textContent = Snd.on ? 'Son : oui' : 'Son : non';
+  if (Snd.on) Snd.splash(0.8);
+});
+
+/* =====================================================================
+   ÉTATS DE TEXTE QUI GLISSENT
+   ===================================================================== */
+function showState(boxId, idx) {
+  const box = $(boxId); if (!box) return;
+  $$('.st', box).forEach((s, k) => {
+    const on = k === idx, was = s.classList.contains('show');
+    s.classList.toggle('show', on);
+    s.classList.toggle('gone', !on && (was || k < idx));
+  });
+}
+
+/* =====================================================================
+   CHAPITRE 2 · LA GROTTE
+   ===================================================================== */
+const cave = { open: 0, drag: false, sx: 0, so: 0, moved: 0, raf: 0 };
+const caveEl = $('#cave'), caveBtn = $('#caveBtn');
+function setCave(o) {
+  cave.open = o;
+  $('#cvStone').setAttribute('transform', 'translate(' + (-o * 340).toFixed(1) + ' 0)');
+  const c = Math.round(lerp(12, 236, o)), c2 = Math.round(lerp(12, 234, o)), c3 = Math.round(lerp(13, 229, o));
+  $('#cvBg').setAttribute('fill', 'rgb(' + c + ',' + c2 + ',' + c3 + ')');
+  $('#cvStars').setAttribute('opacity', (1 - clamp(o * 2, 0, 1)).toFixed(2));
+  $('#cvRays').setAttribute('opacity', clamp((o - 0.5) * 2, 0, 1).toFixed(2));
+  const s = 0.5 + 0.5 * o;
+  $('#cvDisc').setAttribute('transform', 'translate(250 220) scale(' + s.toFixed(3) + ') translate(-250 -220)');
+  $('#cvMirror').setAttribute('opacity', clamp((o - 0.7) * 3.3, 0, 1).toFixed(2));
+  $('#cvRope').setAttribute('opacity', clamp((o - 0.9) * 10, 0, 1).toFixed(2));
+  showState('#caveText', o > 0.5 ? 1 : 0);
+  caveBtn.textContent = o > 0.5 ? 'Refermer la grotte' : 'Faire rouler la roche';
+}
+function animCave(to) {
+  cancelAnimationFrame(cave.raf);
+  const from = cave.open, t0 = performance.now(), dur = 300 + 1000 * Math.abs(to - from);
+  const was = from;
+  if (to === 1 && was < 0.5) {
+    const r = caveEl.getBoundingClientRect();
+    Fx.splat(r.left + r.width * 0.5, r.top + r.height * 0.5, { R: 78, k: 1.6, life: 3.2 });
+    Snd.splash(1.2);
+  }
+  const step = (now) => {
+    const t = clamp((now - t0) / dur, 0, 1), e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    setCave(lerp(from, to, e)); if (t < 1) cave.raf = requestAnimationFrame(step);
+  };
+  cave.raf = requestAnimationFrame(step);
+}
+caveEl.addEventListener('pointerdown', (e) => { cave.drag = true; cave.sx = e.clientX; cave.so = cave.open; cave.moved = 0; cancelAnimationFrame(cave.raf); try { caveEl.setPointerCapture(e.pointerId); } catch (x) { /* */ } });
+caveEl.addEventListener('pointermove', (e) => {
+  if (!cave.drag) return;
+  const dx = cave.sx - e.clientX; cave.moved = Math.max(cave.moved, Math.abs(dx));
+  setCave(clamp(cave.so + dx / (caveEl.clientWidth * 0.7), 0, 1));
+});
+const caveUp = () => {
+  if (!cave.drag) return; cave.drag = false;
+  if (cave.moved < 6) animCave(cave.so > 0.5 ? 0 : 1); else animCave(cave.open > 0.4 ? 1 : 0);
+};
+caveEl.addEventListener('pointerup', caveUp); caveEl.addEventListener('pointercancel', caveUp);
+caveBtn.addEventListener('click', () => animCave(cave.open > 0.5 ? 0 : 1));
+setCave(0);
+
+/* =====================================================================
+   CHAPITRE 3 · LE SERPENT À HUIT TÊTES
+   ===================================================================== */
+const OR = { filled: 0, struck: false };
+(function buildSerpent() {
+  const bez = (p0, p1, p2, p3, t) => { const u = 1 - t; return [u * u * u * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t * t * t * p3[0], u * u * u * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t * t * t * p3[1]]; };
+  let h = '';
+  for (let i = 0; i < 8; i++) {
+    const bx = 62 + i * 85, by = 380, right = i % 2 === 1, A = right ? Math.PI * 0.1 : Math.PI * 0.9;
+    const hx = bx + (right ? 36 : -36) + 20 * Math.sin(i * 1.9), hy = [78, 205, 150, 112, 70, 196, 140, 100][i];
+    const p0 = [bx, by], p1 = [bx + (right ? 24 : -24), by - 130], p3 = [hx, hy], p2 = [hx - Math.cos(A) * 84, hy - Math.sin(A) * 84];
+    const n = 26, Lp = [], Rp = [], mid = [];
+    let prev = bez(p0, p1, p2, p3, 0);
+    for (let k = 0; k <= n; k++) {
+      const t = k / n, q = bez(p0, p1, p2, p3, t), nx = bez(p0, p1, p2, p3, Math.min(1, t + 0.02));
+      let tx = nx[0] - q[0], ty = nx[1] - q[1]; if (k === n) { tx = q[0] - prev[0]; ty = q[1] - prev[1]; }
+      const l = Math.hypot(tx, ty) || 1, nx2 = -ty / l, ny2 = tx / l, w = (26 - 14 * t) / 2;
+      Lp.push((q[0] + nx2 * w).toFixed(1) + ' ' + (q[1] + ny2 * w).toFixed(1)); Rp.push((q[0] - nx2 * w).toFixed(1) + ' ' + (q[1] - ny2 * w).toFixed(1)); mid.push(q[0].toFixed(1) + ' ' + q[1].toFixed(1));
+      prev = q;
+    }
+    const sl = (right ? 1 : -1) * (26 + i * 2);
+    h += '<g class="neck" id="neck' + i + '" style="--sd:' + (-i * 0.73).toFixed(2) + 's;--sl:' + sl + 'deg">' +
+      '<path d="M' + Lp.join(' L') + ' L' + Rp.reverse().join(' L') + ' Z" fill="#ECEAE5"/>' +
+      '<path d="M' + mid.join(' L') + '" fill="none" stroke="#0B0B0C" stroke-width="2" stroke-dasharray="2 8" opacity=".65"/>' +
+      '<g transform="translate(' + hx.toFixed(1) + ' ' + hy.toFixed(1) + ') rotate(' + (A * 180 / Math.PI).toFixed(1) + ')">' +
+      '<path d="M-6 -13 Q 26 -18 54 -6 Q 64 0 54 6 Q 26 18 -6 13 Z" fill="#ECEAE5"/>' +
+      '<circle class="open" cx="24" cy="-5" r="3.6" fill="#C0341F"/><path class="shut" d="M17 -5 l13 2.4" stroke="#0B0B0C" stroke-width="2.6" stroke-linecap="round"/>' +
+      '<path class="open" d="M54 0 l15 -5 M54 0 l15 5" stroke="#C0341F" stroke-width="2.2" stroke-linecap="round" fill="none"/>' +
+      '</g></g>';
+  }
+  h += '<path d="M0 440 L0 372 Q 70 336 150 366 T 300 360 T 450 370 T 600 354 T 720 370 L720 440 Z" fill="url(#scales)" stroke="#ECEAE5" stroke-width="3"/>';
+  $('#serp').innerHTML = h;
+  const vats = $('#vats');
+  for (let i = 0; i < 8; i++) {
+    const b = document.createElement('button'); b.className = 'vat'; b.setAttribute('aria-label', 'Verser le saké dans la cuve ' + (i + 1));
+    b.innerHTML = '<span class="lv"></span>'; vats.appendChild(b);
+    b.addEventListener('click', (e) => {
+      if (b.classList.contains('full') || OR.struck) return;
+      b.classList.add('full'); OR.filled++;
+      $('#neck' + i).classList.add('sleep'); Snd.splash(0.8);
+      $('#orCount').textContent = 'Cuves remplies : ' + OR.filled + ' / 8';
+      if (OR.filled === 8) { showState('#orText', 1); $('#strikeBtn').classList.remove('hide'); }
+    });
+  }
+})();
+$('#strikeBtn').addEventListener('click', (e) => {
+  if (OR.struck) return; OR.struck = true;
+  const r = $('#serpWrap').getBoundingClientRect();
+  Fx.splat(r.left + r.width * 0.5, r.top + r.height * 0.45, { R: 90, k: 1.8, life: 3.4 });
+  for (let i = 0; i < 3; i++) setTimeout(() => Fx.splat(r.left + rnd() * r.width, r.top + rnd() * r.height * 0.8, { R: 30 + rnd() * 40, k: 1.3, life: 2.8 }), 120 + i * 140);
+  Snd.splash(1.3);
+  for (let i = 0; i < 8; i++) setTimeout(() => $('#neck' + i).classList.add('cut'), 80 + i * 90);
+  setTimeout(() => { $('#swordBox').classList.add('on'); sw2.resize(); sw2.burst(1.4); showState('#orText', 2); $('#orCount').textContent = 'Kusanagi est trouvée'; }, 950);
+  $('#strikeBtn').classList.add('hide');
+});
+
+/* =====================================================================
+   CHAPITRE 4 · YŌKAI : carrousel + rouleau
+   ===================================================================== */
+const YO = [
+  { k: '狐', e: '01 · Le renard', t: 'Kitsune', p: 'Le renard vit longtemps, gagne des queues avec l\'âge, jusqu\'à neuf, et prend forme humaine. Messager de la divinité Inari, il peut être bienveillant ou rusé.' },
+  { k: '鬼', e: '02 · L\'ogre', t: 'Oni', p: 'L\'ogre à cornes, armé d\'une massue de fer. Au Setsubun, on le chasse de la maison en lançant des haricots grillés et en criant « Oni wa soto ! », dehors les oni.' },
+  { k: '天狗', e: '03 · Esprit de montagne', t: 'Tengu', p: 'Esprit de montagne au long nez ou au bec de corbeau, maître d\'armes redouté. La légende dit qu\'un tengu aurait enseigné le combat au jeune guerrier Minamoto no Yoshitsune.' },
+  { k: '河童', e: '04 · Esprit des rivières', t: 'Kappa', p: 'Créature des rivières, avec une coupelle d\'eau sur la tête. Elle adore les concombres. Si tu la salues, elle te rend ton salut en s\'inclinant : l\'eau se renverse et sa force disparaît.' }
+];
+const car = $('#car'), track = $('#track'), tiles = $$('.tile', track);
+const cs = { idx: 0, off: 0, drag: false, sx: 0, so: 0, dx: 0, moved: false };
+function carMax() { return Math.max(0, track.scrollWidth - car.clientWidth); }
+function carStep() { return tiles[0].offsetWidth + 22; }
+function carSet(i) { cs.idx = clamp(i, 0, tiles.length - 1); cs.off = clamp(cs.idx * carStep(), 0, carMax()); track.style.transform = 'translate3d(' + (-cs.off) + 'px,0,0)'; }
+$('#cprev').addEventListener('click', () => carSet(cs.idx - 1));
+$('#cnext').addEventListener('click', () => carSet(cs.idx + 1));
+car.addEventListener('pointerdown', (e) => { cs.drag = true; cs.sx = e.clientX; cs.so = cs.off; cs.dx = 0; cs.moved = false; });
+window.addEventListener('pointermove', (e) => {
+  if (!cs.drag) return; cs.dx = e.clientX - cs.sx;
+  if (Math.abs(cs.dx) > 6) { cs.moved = true; track.classList.add('drag'); }
+  if (cs.moved) track.style.transform = 'translate3d(' + (-clamp(cs.so - cs.dx, -80, carMax() + 80)) + 'px,0,0)';
+});
+window.addEventListener('pointerup', () => {
+  if (!cs.drag) return; cs.drag = false; track.classList.remove('drag');
+  if (cs.moved) carSet(Math.round((cs.so - cs.dx) / carStep())); else carSet(cs.idx);
+});
+const drawer = $('#drawer'), shade = $('#shade');
+function openDrawer(i, x, y) {
+  const d = YO[i], t = tiles[i];
+  $('#dmask').innerHTML = t.querySelector('svg').outerHTML;
+  $('#deye').textContent = d.e; $('#dtitle').innerHTML = '<span class="kan">' + d.k + '</span> ' + d.t; $('#dtext').textContent = d.p;
+  drawer.classList.add('on'); shade.classList.add('on'); drawer.setAttribute('aria-hidden', 'false'); drawerOpen = true;
+  Fx.splat(x, y, { R: 52, k: 1.4, life: 2.8 }); Snd.splash(1);
+  setTimeout(() => $('#dclose').focus({ preventScroll: true }), 500);
+}
+function closeDrawer() {
+  drawer.classList.remove('on'); shade.classList.remove('on'); drawer.setAttribute('aria-hidden', 'true'); drawerOpen = false;
+  Snd.splash(0.6);
+}
+tiles.forEach((t, i) => t.addEventListener('click', (e) => { if (cs.moved) { cs.moved = false; return; } const r = t.getBoundingClientRect(); openDrawer(i, e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2); }));
+$('#dclose').addEventListener('click', closeDrawer); shade.addEventListener('click', closeDrawer);
+
+/* =====================================================================
+   CHAPITRE 5 · CENT BOUGIES
+   ===================================================================== */
+const cg = $('#cgrid'), candles = [], CS = { out: 0, done: false };
+for (let i = 0; i < 100; i++) {
+  const b = document.createElement('button'); b.className = 'candle'; b.tabIndex = -1; b.setAttribute('aria-label', 'Souffler la bougie ' + (i + 1));
+  b.style.setProperty('--fd', (-rnd() * 2).toFixed(2) + 's'); b.innerHTML = '<span class="fl"></span>';
+  b.addEventListener('click', () => snuff(i, true)); cg.appendChild(b); candles.push(b);
+}
+function candState() {
+  $('#candCount').textContent = CS.out + ' / 100 histoires';
+  $('#glow').style.setProperty('--lit', ((100 - CS.out) / 100).toFixed(2));
+  if (CS.out >= 100 && !CS.done) {
+    CS.done = true; showState('#candText', 1);
+    $('#tellBtn').classList.add('hide'); $('#relightBtn').classList.remove('hide');
+    setTimeout(() => $('#eye').classList.add('on'), 700);
+  }
+}
+function snuff(i, byClick) {
+  const c = candles[i]; if (c.classList.contains('out')) return;
+  c.classList.add('out'); CS.out++;
+  const r = c.getBoundingClientRect();
+  if (!byClick) Fx.splat(r.left + r.width / 2, r.top + 10, { R: 13, k: 0.55, life: 1.6 });
+  candState();
+}
+$('#tellBtn').addEventListener('click', () => {
+  const lit = candles.map((c, i) => (c.classList.contains('out') ? -1 : i)).filter((i) => i >= 0);
+  if (lit.length) snuff(lit[Math.floor(rnd() * lit.length)], false);
+});
+$('#relightBtn').addEventListener('click', () => {
+  candles.forEach((c) => c.classList.remove('out')); CS.out = 0; CS.done = false;
+  $('#eye').classList.remove('on'); showState('#candText', 0);
+  $('#tellBtn').classList.remove('hide'); $('#relightBtn').classList.add('hide'); candState();
+});
+
+/* =====================================================================
+   NOUVEAUX MYTHES : Kaguya-hime, le renard à neuf queues, Tanabata, Urashima
+   ===================================================================== */
+const TICK = {};
+const eio = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+class Stg {
+  constructor(id) { this.cv = $(id); this.ctx = this.cv.getContext('2d'); this.w = 500; this.d = 1; this.s = 1; this.resize(); }
+  resize() {
+    const r = this.cv.getBoundingClientRect(); this.d = Math.min(2, window.devicePixelRatio || 1); this.w = r.width || 500;
+    this.cv.width = Math.round(this.w * this.d); this.cv.height = Math.round((r.height || 440) * this.d); this.s = this.w / 500;
+  }
+  pt(e) { const r = this.cv.getBoundingClientRect(); return [(e.clientX - r.left) / this.s, (e.clientY - r.top) / this.s]; }
+  begin() {
+    if (this.cv.clientWidth && Math.abs(this.cv.clientWidth - this.w) > 2) this.resize();
+    const c = this.ctx; c.setTransform(this.d * this.s, 0, 0, this.d * this.s, 0, 0); c.clearRect(0, 0, 500, 440); return c;
+  }
+}
+const glowDot = (c, x, y, r, rgb, a) => {
+  const g = c.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, 'rgba(' + rgb + ',' + a.toFixed(3) + ')'); g.addColorStop(1, 'rgba(' + rgb + ',0)');
+  c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, TAU); c.fill();
+};
+
+/* ---------- 竹 · Kaguya-hime : trancher les bambous ---------- */
+const kg = new Stg('#kgc'), KG = { st: 0, cuts: 0, stalks: [], back: [], pieces: [], bits: [], trail: [], moonT: 0, mT0: 0, down: false, lx: 0, ly: 0 };
+function kgNodes(top) { const n = []; let y = 440 - 26 - rnd() * 20; while (y > top) { n.push(y); y -= 44 + rnd() * 34; } return n.reverse(); }
+function kgInit() {
+  KG.stalks = []; KG.back = []; KG.pieces = []; KG.bits = []; KG.trail = []; KG.cuts = 0; KG.moonT = 0; KG.st = 0;
+  [38, 100, 168, 250, 332, 398, 462].forEach((x) => KG.stalks.push({ x: x + (rnd() - 0.5) * 10, w: 11 + rnd() * 5, nodes: kgNodes(-40), top: -60, glow: false, open: false, ph: rnd() * TAU }));
+  for (let i = 0; i < 10; i++) KG.back.push({ x: 8 + i * 54 + rnd() * 24, w: 5 + rnd() * 4, nodes: kgNodes(-40), ph: rnd() * TAU });
+  const g = KG.stalks[3]; g.glow = true;
+  let k = Math.floor(g.nodes.length / 2);
+  for (let i = 0; i < g.nodes.length - 1; i++) if (g.nodes[i] <= 270 && g.nodes[i + 1] > 270) k = i;
+  g.gTop = g.nodes[k]; g.gBot = g.nodes[k + 1];
+  $('#kgCount').textContent = 'Bambous coupés : 0';
+}
+function kgStalk(c, s, y1, y2, t, a, still, leaves) {
+  const xw = (y) => s.x + (still ? 0 : Math.pow(Math.max(0, 1 - y / 440), 2) * 8 * Math.sin(t * 0.0008 + s.ph));
+  const ys = [Math.max(y1, -30)]; for (const n of s.nodes) if (n > ys[0] + 3 && n < y2 - 3) ys.push(n); ys.push(y2);
+  const hw = s.w / 2, g = c.createLinearGradient(s.x - hw, 0, s.x + hw, 0);
+  g.addColorStop(0, '#6E6C68'); g.addColorStop(0.42, '#ECEAE5'); g.addColorStop(1, '#8C8983');
+  c.globalAlpha = a; c.fillStyle = g;
+  for (let i = 0; i < ys.length - 1; i++) {
+    const a0 = ys[i], b0 = ys[i + 1], xa = xw(a0), xb = xw(b0);
+    c.beginPath(); c.moveTo(xa - hw, a0); c.lineTo(xa + hw, a0); c.lineTo(xb + hw, b0); c.lineTo(xb - hw, b0); c.closePath(); c.fill();
+  }
+  c.strokeStyle = '#060606'; c.lineWidth = 2.6; c.lineCap = 'round';
+  s.nodes.forEach((n, idx) => {
+    if (n <= ys[0] + 1 || n >= y2 - 1) return;
+    const x = xw(n); c.beginPath(); c.moveTo(x - hw - 1.5, n); c.lineTo(x + hw + 1.5, n); c.stroke();
+    if (leaves && n < 330 && n > ys[0] + 10) {
+      const d = idx % 2 ? 1 : -1, sw = (still ? 0 : Math.sin(t * 0.0011 + s.ph + idx)) * 3;
+      c.strokeStyle = 'rgba(236,234,229,.55)'; c.lineWidth = 2.4;
+      c.beginPath(); c.moveTo(x, n); c.quadraticCurveTo(x + d * 22, n - 20 + sw, x + d * (40 + (idx * 7) % 14), n - 3 + sw); c.stroke();
+      c.strokeStyle = '#060606'; c.lineWidth = 2.6;
+    }
+  });
+  c.globalAlpha = 1;
+}
+function kgCut(s, y) {
+  if (y <= s.top + 18 || y > 428) return;
+  let cutY = y;
+  if (s.glow && !s.open && y >= s.gTop - 10) { cutY = s.gTop; s.open = true; }
+  if (cutY <= s.top + 14) return;
+  const old = s.top; s.top = cutY;
+  KG.pieces.push({ s: { x: s.x, w: s.w, nodes: s.nodes, ph: s.ph }, y1: old, y2: cutY, dx: 0, dy: 0, rot: 0, vx: (rnd() < 0.5 ? -1 : 1) * (16 + rnd() * 34), vy: -50 - rnd() * 40, vr: (rnd() - 0.5) * 2.4 });
+  for (let i = 0; i < 12; i++) KG.bits.push({ x: s.x + (rnd() - 0.5) * s.w, y: cutY, vx: (rnd() - 0.5) * 90, vy: -30 - rnd() * 80, r: 0.8 + rnd() * 1.8, t0: performance.now(), life: 700 + rnd() * 500 });
+  KG.cuts++; $('#kgCount').textContent = 'Bambous coupés : ' + KG.cuts;
+  if (s.open && KG.st === 0) { KG.st = 1; showState('#kgText', 1); $('#kgMoon').classList.remove('hide'); }
+}
+function kgSlash(x0, y0, x1, y1) {
+  KG.trail.push({ x0, y0, x1, y1, t: performance.now() });
+  for (const s of KG.stalks) {
+    const hw = s.w / 2 + 3;
+    if (Math.max(x0, x1) < s.x - hw || Math.min(x0, x1) > s.x + hw) continue;
+    const dx = x1 - x0, u = Math.abs(dx) < 1e-3 ? 1 : clamp((s.x - x0) / dx, 0, 1);
+    kgCut(s, y0 + (y1 - y0) * u);
+  }
+}
+kg.cv.addEventListener('pointerdown', (e) => {
+  const [x, y] = kg.pt(e); KG.down = true; KG.lx = x; KG.ly = y; try { kg.cv.setPointerCapture(e.pointerId); } catch (z) { /* */ }
+  kgSlash(x - 24, y - 2, x + 24, y + 2);
+});
+kg.cv.addEventListener('pointermove', (e) => { if (!KG.down) return; const [x, y] = kg.pt(e); kgSlash(KG.lx, KG.ly, x, y); KG.lx = x; KG.ly = y; });
+const kgUp = () => { KG.down = false; };
+kg.cv.addEventListener('pointerup', kgUp); kg.cv.addEventListener('pointercancel', kgUp);
+$('#kgMoon').addEventListener('click', () => {
+  KG.st = 2; KG.mT0 = performance.now(); showState('#kgText', 2); $('#kgMoon').classList.add('hide');
+});
+$('#kgReset').addEventListener('click', () => { kgInit(); showState('#kgText', 0); $('#kgMoon').classList.add('hide'); $('#kgReset').classList.add('hide'); });
+TICK.c5 = (now, dt) => {
+  const c = kg.begin(), g = KG.stalks[3];
+  if (KG.st >= 2) {
+    KG.moonT = clamp((now - KG.mT0) / 8000, 0, 1);
+    if (KG.moonT >= 1 && KG.st === 2) { KG.st = 3; showState('#kgText', 3); $('#kgReset').classList.remove('hide'); }
+  }
+  const m = eio(KG.moonT), mx = lerp(388, 250, m), my = lerp(100, 168, m), mr = lerp(52, 112, m);
+  glowDot(c, mx, my, mr * 3, '236,234,229', 0.12 + 0.2 * m);
+  c.fillStyle = '#E9E6DE'; c.beginPath(); c.arc(mx, my, mr, 0, TAU); c.fill();
+  c.fillStyle = 'rgba(70,70,76,.16)';
+  for (const [ox, oy, rx, ry] of [[-0.3, -0.2, 0.34, 0.26], [0.28, 0.1, 0.26, 0.2], [-0.1, 0.42, 0.22, 0.16], [0.1, -0.44, 0.14, 0.1]]) { c.beginPath(); c.ellipse(mx + ox * mr, my + oy * mr, rx * mr, ry * mr, 0.4, 0, TAU); c.fill(); }
+  for (const b of KG.back) kgStalk(c, b, -30, 450, now, 0.14, false, false);
+  for (const s of KG.stalks) {
+    if (s.glow && !s.open) {
+      const gy = (s.gTop + s.gBot) / 2, p = 0.65 + 0.35 * Math.sin(now * 0.003), x = s.x + Math.pow(1 - gy / 440, 2) * 8 * Math.sin(now * 0.0008 + s.ph);
+      c.globalCompositeOperation = 'lighter'; glowDot(c, x, gy, 74, '255,244,220', 0.55 * p); c.globalCompositeOperation = 'source-over';
+    }
+    kgStalk(c, s, s.top, 456, now, 1, false, true);
+  }
+  // princesse
+  if (g.open) {
+    const e = eio(KG.moonT), bx = g.x, by = g.gTop + 10, px = lerp(bx, mx, e) + Math.sin(now * 0.002) * 4 * (1 - e) + (KG.moonT > 0 ? 10 * Math.sin(now * 0.004) * Math.sin(Math.PI * e) : 0);
+    const py = lerp(by, my, e), sc = lerp(1, 0.22, e), al = 1 - clamp((KG.moonT - 0.84) / 0.16, 0, 1);
+    c.globalCompositeOperation = 'lighter'; glowDot(c, px, py - 20 * sc, 60 * sc + 16, '255,246,226', 0.5 * al); c.globalCompositeOperation = 'source-over';
+    if (KG.moonT > 0 && KG.moonT < 0.9 && rnd() < 0.7) KG.bits.push({ x: px + (rnd() - 0.5) * 10, y: py - 10, vx: (rnd() - 0.5) * 18, vy: 8 + rnd() * 18, r: 0.9 + rnd() * 1.4, t0: now, life: 1400, soft: true });
+    c.save(); c.translate(px, py); c.scale(sc, sc); c.globalAlpha = al; c.fillStyle = '#F6F2E8';
+    c.beginPath(); c.moveTo(-6, -26); c.lineTo(6, -26); c.lineTo(15, 0); c.lineTo(-15, 0); c.closePath(); c.fill();
+    c.beginPath(); c.arc(0, -34, 6, 0, TAU); c.fill();
+    c.strokeStyle = '#F6F2E8'; c.lineWidth = 2.4; c.lineCap = 'round'; c.beginPath(); c.moveTo(-5, -38); c.quadraticCurveTo(-14, -26, -13 + Math.sin(now * 0.003) * 3, -6); c.stroke();
+    c.strokeStyle = '#C0341F'; c.lineWidth = 3; c.beginPath(); c.moveTo(-6, -17); c.lineTo(6, -17); c.stroke();
+    c.restore(); c.globalAlpha = 1;
+  }
+  // morceaux qui tombent
+  KG.pieces = KG.pieces.filter((p) => p.dy < 560);
+  for (const p of KG.pieces) {
+    p.vy += 620 * dt; p.dx += p.vx * dt; p.dy += p.vy * dt; p.rot += p.vr * dt;
+    c.save(); c.translate(p.s.x + p.dx, p.y2 + p.dy); c.rotate(p.rot); c.translate(-p.s.x, -p.y2);
+    kgStalk(c, p.s, p.y1, p.y2, now, 1, true, true); c.restore();
+  }
+  // éclats et traînée
+  KG.bits = KG.bits.filter((b) => now - b.t0 < b.life);
+  for (const b of KG.bits) {
+    const a = (now - b.t0) / 1000, k = 1 - (now - b.t0) / b.life;
+    c.globalAlpha = k * (b.soft ? 0.7 : 1); c.fillStyle = '#fff'; c.beginPath(); c.arc(b.x + b.vx * a, b.y + b.vy * a + (b.soft ? 0 : 160 * a * a), b.r, 0, TAU); c.fill();
+  }
+  c.globalAlpha = 1;
+  KG.trail = KG.trail.filter((s) => now - s.t < 380);
+  c.lineCap = 'round';
+  for (const s of KG.trail) { const k = 1 - (now - s.t) / 380; c.strokeStyle = 'rgba(255,255,255,' + (k * 0.9).toFixed(2) + ')'; c.lineWidth = 1 + 3.4 * k; c.beginPath(); c.moveTo(s.x0, s.y0); c.lineTo(s.x1, s.y1); c.stroke(); }
+  // brume
+  for (let i = 0; i < 3; i++) { const x = 250 + Math.sin(now * 0.00012 * (i + 1) + i * 2) * 170; const gr = c.createRadialGradient(x, 400 - i * 40, 0, x, 400 - i * 40, 190); gr.addColorStop(0, 'rgba(236,234,229,.10)'); gr.addColorStop(1, 'rgba(236,234,229,0)'); c.fillStyle = gr; c.fillRect(0, 200, 500, 240); }
+};
+
+/* ---------- 狐 · le renard à neuf queues ---------- */
+const ktSvg = $('#kt'), KT = { lit: new Array(9).fill(false), n: 0 };
+const KT_ORDER = [4, 3, 5, 2, 6, 1, 7, 0, 8];
+(function ktBuild() {
+  let h = '';
+  const draw = [0, 8, 1, 7, 2, 6, 3, 5, 4];
+  for (const i of draw) {
+    const th = (i - 4) * 17.5 * Math.PI / 180, L = 214 - Math.abs(i - 4) * 7, bx = 250, by = 332, sn = Math.sin(th), cs = Math.cos(th);
+    const tx = bx + L * sn, ty = by - L * cs, bulge = (i - 4) * 5, wm = 30;
+    const mx = bx + L * 0.55 * sn + cs * bulge, my = by - L * 0.55 * cs + sn * bulge;
+    const f = (v) => v.toFixed(1);
+    const d = 'M' + bx + ' ' + by + ' Q' + f(mx + cs * wm * 1.6) + ' ' + f(my + sn * wm * 1.6) + ' ' + f(tx) + ' ' + f(ty) + ' Q' + f(mx - cs * wm * 1.6) + ' ' + f(my - sn * wm * 1.6) + ' ' + bx + ' ' + by + ' Z';
+    const rot = th * 180 / Math.PI - 90, ex = tx - sn * 18, ey = ty + cs * 18;
+    h += '<g class="tail" data-i="' + i + '" style="--fd:' + (i * 0.17).toFixed(2) + 's" role="button" tabindex="0" aria-label="Queue ' + (i + 1) + '"><path class="tb" d="' + d + '"></path>' +
+      '<ellipse class="tt" cx="' + f(ex) + '" cy="' + f(ey) + '" rx="17" ry="9" transform="rotate(' + f(rot) + ' ' + f(ex) + ' ' + f(ey) + ')"></ellipse>' +
+      '<g transform="translate(' + f(tx) + ' ' + f(ty) + ')"><g class="fire"><path d="M0 6 C-11 -8 -7 -24 0 -44 C7 -24 11 -8 0 6 Z" fill="#fff"></path><path d="M0 4 C-5 -4 -3 -14 0 -24 C3 -14 5 -4 0 4 Z" fill="#C9C6BE"></path></g></g></g>';
+  }
+  $('#ktTails').innerHTML = h;
+  let o = ''; for (let i = 0; i < 9; i++) o += '<circle class="orb" cx="' + (60 + rnd() * 380).toFixed(0) + '" cy="' + (90 + rnd() * 280).toFixed(0) + '" r="' + (1.8 + rnd() * 2.4).toFixed(1) + '" style="--od:' + (rnd() * 4).toFixed(1) + 's;--dx:' + ((rnd() - 0.5) * 36).toFixed(0) + 'px;--dy:' + (-14 - rnd() * 34).toFixed(0) + 'px"></circle>';
+  $('#ktOrbs').innerHTML = o;
+})();
+function ktUpdate() {
+  KT.n = KT.lit.filter(Boolean).length;
+  $$('.tail', ktSvg).forEach((t) => t.classList.toggle('lit', KT.lit[+t.getAttribute('data-i')]));
+  $('#ktCount').textContent = KT.n + ' / 9 queues';
+  ktSvg.classList.toggle('some', KT.n > 0); ktSvg.classList.toggle('awake', KT.n >= 3); ktSvg.classList.toggle('full', KT.n === 9);
+  $('#ktAuraC').setAttribute('opacity', (KT.n / 9 * 0.9).toFixed(2));
+  const full = KT.n === 9;
+  showState('#ktText', full ? 1 : 0);
+  $('#ktAdd').classList.toggle('hide', full); $('#ktReset').classList.toggle('hide', !full);
+}
+function ktLight(i) { if (KT.lit[i]) return; KT.lit[i] = true; ktUpdate(); const r = $('.tail[data-i="' + i + '"]', ktSvg).getBoundingClientRect(); Fx.splat(r.left + r.width / 2, r.top + r.height * 0.12, { R: 9, k: 0.5, life: 1.6, noCore: true }); }
+ktSvg.addEventListener('click', (e) => { const t = e.target.closest && e.target.closest('.tail'); if (t) ktLight(+t.getAttribute('data-i')); });
+ktSvg.addEventListener('keydown', (e) => { if (e.key !== 'Enter' && e.key !== ' ') return; const t = e.target.closest && e.target.closest('.tail'); if (t) { e.preventDefault(); ktLight(+t.getAttribute('data-i')); } });
+$('#ktAdd').addEventListener('click', () => { const i = KT_ORDER.find((k) => !KT.lit[k]); if (i != null) ktLight(i); });
+$('#ktReset').addEventListener('click', () => { KT.lit.fill(false); ktUpdate(); });
+
+/* ---------- 星 · Tanabata : le pont de pies ---------- */
+const tb = new Stg('#tbc');
+const TB = { stars: [], riv: [], mp: [], assigned: 0, landed: 0, rain: false, rw: 1, fig: 0, cross: 0, met: false, drops: [], sparks: [], pulse: 0 };
+const TB_SLOTS = [0, 6, 1, 5, 2, 4, 3].map((k) => 207 + k * 14.3);
+for (let i = 0; i < 90; i++) TB.stars.push({ x: rnd() * 500, y: rnd() * 440, r: 0.5 + rnd() * 1.3, ph: rnd() * TAU, sp: 0.001 + rnd() * 0.003 });
+for (let i = 0; i < 300; i++) TB.riv.push({ y: rnd() * 440, xo: rnd() * 2 - 1, v: 14 + rnd() * 30, r: 0.5 + rnd() * 1.5, a: 0.22 + rnd() * 0.6, ph: rnd() * TAU });
+function tbText() {
+  $('#tbCount').textContent = 'Pont : ' + TB.landed + ' / 7 pies';
+}
+function tbCall() {
+  if (TB.rain || TB.assigned >= 7) return;
+  const slot = TB.assigned++, side = rnd() < 0.5 ? -1 : 1, ex = TB_SLOTS[slot];
+  TB.mp.push({ sx: 250 + side * (170 + rnd() * 70), sy: -30 - rnd() * 30, ex, ey: 252, cx: (250 + ex) / 2 + side * 40, cy: 10 + rnd() * 40, st: 'fly', t0: performance.now(), dur: 1200 + rnd() * 300, ph: rnd() * TAU });
+}
+tb.cv.addEventListener('pointerdown', () => tbCall());
+$('#tbCall').addEventListener('click', tbCall);
+$('#tbRain').addEventListener('click', () => {
+  TB.rain = !TB.rain; $('#tbRain').setAttribute('aria-pressed', String(TB.rain)); $('#tbRain').textContent = TB.rain ? 'Arrêter la pluie' : 'Faire pleuvoir';
+  if (TB.rain) { const now = performance.now(); TB.mp.forEach((m) => { m.st = 'leave'; m.t0 = now; m.sx = m.st === 'fly' ? m.sx : m.ex; }); TB.assigned = 0; TB.landed = 0; tbText(); if (TB.met) { TB.met = false; showState('#tbText', 0); } }
+});
+function tbBird(c, x, y, flap, a, dirX) {
+  c.save(); c.translate(x, y); c.globalAlpha = a; c.fillStyle = '#F2EFE8'; c.strokeStyle = '#F2EFE8'; c.lineCap = 'round';
+  c.beginPath(); c.ellipse(0, 0, 8, 3.4, 0, 0, TAU); c.fill();
+  c.beginPath(); c.arc(dirX * 8, -1.4, 2.6, 0, TAU); c.fill();
+  c.lineWidth = 1.8; c.beginPath(); c.moveTo(-dirX * 7, 1); c.lineTo(-dirX * 16, 3); c.stroke();
+  c.lineWidth = 2.4;
+  for (const sg of [-1, 1]) { c.beginPath(); c.moveTo(-sg * 1, -1.5); c.quadraticCurveTo(-sg * 6, -9 - flap * 7, -sg * 13, -3 - flap * 11); c.stroke(); }
+  c.restore(); c.globalAlpha = 1;
+}
+function tbFig(c, x, y, kind, now) {
+  c.save(); c.translate(x, y); c.fillStyle = '#F2EFE8'; c.strokeStyle = '#F2EFE8'; c.lineCap = 'round';
+  c.beginPath(); c.moveTo(-6, -30); c.lineTo(6, -30); c.lineTo(kind ? 11 : 13, 0); c.lineTo(kind ? -11 : -13, 0); c.closePath(); c.fill();
+  c.beginPath(); c.arc(0, -37, 5.4, 0, TAU); c.fill();
+  c.strokeStyle = '#C0341F'; c.lineWidth = 3; c.beginPath(); c.moveTo(-6, -19); c.lineTo(6, -19); c.stroke();
+  c.strokeStyle = '#F2EFE8'; c.lineWidth = 2;
+  if (!kind) { c.beginPath(); c.moveTo(-5, -41); c.quadraticCurveTo(-13, -30, -12, -8); c.stroke(); c.globalAlpha = 0.7; c.beginPath(); c.moveTo(6, -27); c.quadraticCurveTo(22, -26 + Math.sin(now * 0.004) * 4, 30, -12 + Math.sin(now * 0.004) * 5); c.stroke(); }
+  else { c.beginPath(); c.moveTo(-7, -42); c.lineTo(7, -42); c.lineTo(0, -52); c.closePath(); c.fill(); c.beginPath(); c.moveTo(-14, -6); c.lineTo(15, -42); c.stroke(); c.beginPath(); c.arc(-14, -2, 3.2, 0, TAU); c.fill(); c.beginPath(); c.arc(15, -38, 3.2, 0, TAU); c.fill(); }
+  c.restore(); c.globalAlpha = 1;
+}
+function tbCross(c, x, y, r, a) {
+  glowDot(c, x, y, r * 4, '255,255,255', a * 0.35);
+  c.strokeStyle = 'rgba(255,255,255,' + a.toFixed(2) + ')'; c.lineWidth = 1.2; c.beginPath(); c.moveTo(x - r * 3, y); c.lineTo(x + r * 3, y); c.moveTo(x, y - r * 3); c.lineTo(x, y + r * 3); c.stroke();
+}
+TICK.c7 = (now, dt) => {
+  const c = tb.begin();
+  TB.rw += ((TB.rain ? 1.9 : 1) - TB.rw) * Math.min(1, dt * 1.4);
+  for (const s of TB.stars) { c.globalAlpha = 0.25 + 0.65 * Math.pow(0.5 + 0.5 * Math.sin(now * s.sp + s.ph), 2); c.fillStyle = '#fff'; c.beginPath(); c.arc(s.x, s.y, s.r, 0, TAU); c.fill(); }
+  c.globalAlpha = 1;
+  const rw = 50 * TB.rw, gb = c.createLinearGradient(250 - rw * 1.6, 0, 250 + rw * 1.6, 0);
+  gb.addColorStop(0, 'rgba(236,234,229,0)'); gb.addColorStop(0.5, 'rgba(236,234,229,.10)'); gb.addColorStop(1, 'rgba(236,234,229,0)'); c.fillStyle = gb; c.fillRect(250 - rw * 1.6, 0, rw * 3.2, 440);
+  c.fillStyle = '#fff';
+  for (const p of TB.riv) { p.y += p.v * dt * (TB.rain ? 1.8 : 1); if (p.y > 444) p.y -= 448; const x = 250 + p.xo * rw + 5 * Math.sin(p.y * 0.03 + now * 0.001 + p.ph); c.globalAlpha = p.a * (0.7 + 0.3 * Math.sin(now * 0.003 + p.ph)); c.beginPath(); c.arc(x, p.y, p.r, 0, TAU); c.fill(); }
+  c.globalAlpha = 0.4; c.strokeStyle = '#ECEAE5'; c.lineWidth = 2; c.lineCap = 'round';
+  for (const sg of [-1, 1]) { c.beginPath(); for (let y = -4; y <= 444; y += 8) { const x = 250 + sg * (rw + 3) + 4 * Math.sin(y * 0.05) + 3 * Math.sin(y * 0.13 + 1); if (y < 0) c.moveTo(x, y); else c.lineTo(x, y); } c.stroke(); }
+  c.globalAlpha = 1;
+  // rives
+  c.strokeStyle = 'rgba(236,234,229,.5)'; c.lineWidth = 2;
+  c.beginPath(); c.moveTo(0, 262); c.lineTo(250 - rw - 4, 262); c.moveTo(250 + rw + 4, 262); c.lineTo(500, 262); c.stroke();
+  // bambou de vœux
+  c.strokeStyle = 'rgba(236,234,229,.7)'; c.lineWidth = 3; c.beginPath(); c.moveTo(474, 440); c.quadraticCurveTo(480, 340, 456, 270); c.stroke();
+  for (let i = 0; i < 4; i++) { const y = 296 + i * 30, x = 474 - (i + 0.2) * 5 + 6, sw = Math.sin(now * 0.0017 + i) * 2.5; c.strokeStyle = 'rgba(236,234,229,.55)'; c.lineWidth = 1.4; c.beginPath(); c.moveTo(x, y); c.lineTo(x - 12 + sw, y + 6); c.stroke(); c.fillStyle = 'rgba(236,234,229,.85)'; c.fillRect(x - 15 + sw, y + 6, 5, 17); }
+  // pies
+  const live = [];
+  for (const m of TB.mp) {
+    const k = (now - m.t0) / m.dur;
+    if (m.st === 'fly') {
+      const u = eio(clamp(k, 0, 1)), a = (1 - u) * (1 - u), b = 2 * (1 - u) * u, d = u * u;
+      const x = a * m.sx + b * m.cx + d * m.ex, y = a * m.sy + b * m.cy + d * m.ey;
+      tbBird(c, x, y, Math.sin(now * 0.03 + m.ph), 1, m.ex > m.sx ? 1 : -1);
+      if (k >= 1) { m.st = 'sit'; TB.landed++; tbText(); if (TB.landed === 7) { TB.pulse = 1; } }
+      live.push(m);
+    } else if (m.st === 'sit') { tbBird(c, m.ex, m.ey, 0.15 + 0.12 * Math.sin(now * 0.004 + m.ph), 1, 1); live.push(m); }
+    else { const l = (now - m.t0) / 1500; if (l < 1) { tbBird(c, m.ex + l * 40, m.ey - l * 260, Math.sin(now * 0.03 + m.ph), 1 - l, 1); live.push(m); } }
+  }
+  TB.mp = live;
+  // amants
+  const full = TB.landed >= 7 && !TB.rain;
+  TB.cross += ((full ? 1 : 0) - TB.cross) * Math.min(1, dt * (full ? 0.7 : 1.6));
+  TB.fig += ((TB.rain ? 0 : TB.landed / 7) - TB.fig) * Math.min(1, dt * 1.3);
+  const edge = 250 - rw - 16, walk = Math.min(1, TB.fig / (6 / 7)), lx = lerp(lerp(62, edge, walk), 236, eio(TB.cross)), rxp = lerp(lerp(438, 500 - edge, walk), 264, eio(TB.cross));
+  tbFig(c, lx, 262, 0, now); tbFig(c, rxp, 262, 1, now);
+  c.globalAlpha = 0.65 * (1 - clamp(TB.cross * 2, 0, 1)); c.fillStyle = '#ECEAE5'; c.font = '15px "Yuji Boku","Shippori Mincho",serif'; c.textAlign = 'center'; c.fillText('織女', lx, 284); c.fillText('牽牛', rxp, 284); c.globalAlpha = 1;
+  tbCross(c, lx, 176, 3 + 1.6 * Math.sin(now * 0.004), 0.7 + 0.3 * Math.sin(now * 0.003)); tbCross(c, rxp, 176, 3 + 1.6 * Math.sin(now * 0.004 + 2), 0.7 + 0.3 * Math.sin(now * 0.003 + 1));
+  if (TB.cross > 0.96 && !TB.met) {
+    TB.met = true; showState('#tbText', 1); TB.pulse = 1;
+    for (let i = 0; i < 26; i++) { const a = rnd() * TAU, v = 14 + rnd() * 40; TB.sparks.push({ x: 250, y: 222, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 10, r: 0.8 + rnd() * 1.6, t0: now, life: 1800 + rnd() * 900 }); }
+  }
+  if (TB.met) { c.globalCompositeOperation = 'lighter'; glowDot(c, 250, 226, 60 + 90 * (1 - TB.pulse), '255,252,240', 0.16 + 0.34 * TB.pulse); c.globalCompositeOperation = 'source-over'; }
+  TB.pulse = Math.max(0, TB.pulse - dt * 0.6);
+  TB.sparks = TB.sparks.filter((s) => now - s.t0 < s.life);
+  for (const s of TB.sparks) { const a = (now - s.t0) / 1000; c.globalAlpha = 1 - (now - s.t0) / s.life; c.fillStyle = '#fff'; c.beginPath(); c.arc(s.x + s.vx * a, s.y + s.vy * a, s.r, 0, TAU); c.fill(); }
+  c.globalAlpha = 1;
+  // pluie
+  if (TB.rain) for (let i = 0; i < Math.ceil(dt * 420); i++) TB.drops.push({ x: rnd() * 540 - 20, y: -10, v: 380 + rnd() * 260 });
+  TB.drops = TB.drops.filter((d) => d.y < 450);
+  c.strokeStyle = 'rgba(236,234,229,.45)'; c.lineWidth = 1;
+  c.beginPath(); for (const d of TB.drops) { d.y += d.v * dt; d.x -= d.v * dt * 0.18; c.moveTo(d.x, d.y); c.lineTo(d.x + 3, d.y - 12); } c.stroke();
+};
+
+/* ---------- 浦 · Urashima Tarō : la boîte ---------- */
+const ur = new Stg('#urc'), UR = { v: 0, L: 0, boxed: false, mT0: 0, age: 0, smoke: [] };
+function urUpdate() {
+  const v = UR.v; $('#urCount').textContent = 'Au palais : ' + v + (v > 1 ? ' ans' : ' an') + ' · Au rivage : ' + v * 100 + ' ans';
+  $('#urBox').classList.toggle('hide', !(v === 3 && !UR.boxed));
+}
+function urReset() { UR.boxed = false; UR.age = 0; UR.smoke = []; showState('#urText', 0); $('#urReset').classList.add('hide'); urUpdate(); }
+$('#urSl').addEventListener('input', (e) => { UR.v = +e.target.value; if (UR.boxed) { urReset(); } urUpdate(); });
+$('#urBox').addEventListener('click', () => {
+  UR.boxed = true; UR.mT0 = performance.now(); showState('#urText', 1); $('#urBox').classList.add('hide'); $('#urReset').classList.remove('hide');
+  for (let i = 0; i < 70; i++) UR.smoke.push({ x: 392 + (rnd() - 0.5) * 14, y: 366, vx: (rnd() - 0.5) * 34 + 6, vy: -(20 + rnd() * 54), r: 6 + rnd() * 10, g: 14 + rnd() * 26, t0: UR.mT0 + rnd() * 700, life: 2600 + rnd() * 1800 });
+});
+$('#urReset').addEventListener('click', () => { UR.v = 0; $('#urSl').value = 0; urReset(); });
+ur.cv.addEventListener('pointerdown', (e) => { const [x, y] = ur.pt(e); const now = performance.now(); for (let i = 0; i < 6; i++) UR.smoke.push({ x, y, vx: (rnd() - 0.5) * 20, vy: -(10 + rnd() * 20), r: 3 + rnd() * 4, g: 8 + rnd() * 10, t0: now, life: 1200 + rnd() * 600 }); });
+TICK.c8 = (now, dt) => {
+  const c = ur.begin();
+  UR.L += (UR.v - UR.L) * Math.min(1, dt * 1.4);
+  const L = UR.L, cr = clamp((L - 1) / 2, 0, 1);
+  UR.age = UR.boxed ? clamp((now - UR.mT0 - 500) / 3200, 0, 1) : Math.max(0, UR.age - dt * 0.8);
+  // cadran du temps
+  c.strokeStyle = 'rgba(236,234,229,.5)'; c.lineWidth = 2; c.beginPath(); c.arc(56, 60, 30, 0, TAU); c.stroke();
+  for (let i = 0; i < 12; i++) { const a = i / 12 * TAU; c.beginPath(); c.moveTo(56 + Math.cos(a) * 26, 60 + Math.sin(a) * 26); c.lineTo(56 + Math.cos(a) * 30, 60 + Math.sin(a) * 30); c.stroke(); }
+  const ha = L * TAU * 4 - Math.PI / 2; c.lineWidth = 2.6; c.lineCap = 'round'; c.beginPath(); c.moveTo(56, 60); c.lineTo(56 + Math.cos(ha) * 22, 60 + Math.sin(ha) * 22); c.stroke();
+  c.lineWidth = 1.6; c.beginPath(); c.moveTo(56, 60); c.lineTo(56 + Math.cos(ha / 12) * 14, 60 + Math.sin(ha / 12) * 14); c.stroke();
+  // palais du dragon dans une bulle
+  c.save(); c.beginPath(); c.arc(400, 92, 62, 0, TAU); c.clip();
+  const bg = c.createLinearGradient(0, 30, 0, 154); bg.addColorStop(0, '#16181B'); bg.addColorStop(1, '#0B0C0E'); c.fillStyle = bg; c.fillRect(330, 30, 140, 124);
+  for (let i = 0; i < 4; i++) { c.strokeStyle = 'rgba(236,234,229,' + (0.1 + 0.05 * i) + ')'; c.lineWidth = 1.4; c.beginPath(); for (let x = 330; x <= 470; x += 6) { const y = 52 + i * 8 + Math.sin(x * 0.07 + now * 0.002 + i) * 2.2; if (x === 330) c.moveTo(x, y); else c.lineTo(x, y); } c.stroke(); }
+  c.globalAlpha = 0.5 + 0.18 * UR.v; c.fillStyle = '#ECEAE5';
+  c.fillRect(380, 108, 40, 26); c.beginPath(); c.moveTo(368, 108); c.quadraticCurveTo(392, 106, 400, 86); c.quadraticCurveTo(408, 106, 432, 108); c.lineTo(424, 112); c.lineTo(376, 112); c.closePath(); c.fill();
+  c.fillRect(348, 120, 22, 14); c.fillRect(430, 120, 22, 14); c.beginPath(); c.moveTo(342, 120); c.lineTo(359, 106); c.lineTo(376, 120); c.fill(); c.beginPath(); c.moveTo(424, 120); c.lineTo(441, 106); c.lineTo(458, 120); c.fill();
+  c.globalAlpha = 1; c.fillStyle = '#060606'; c.fillRect(394, 118, 12, 16);
+  c.strokeStyle = 'rgba(236,234,229,.65)'; c.lineWidth = 1.6; for (let i = 0; i < 5; i++) { const fx = 350 + ((now * 0.02 * (1 + i * 0.3) + i * 40) % 130), fy = 70 + i * 10 + Math.sin(now * 0.003 + i) * 4; c.beginPath(); c.ellipse(fx, fy, 5, 2.2, 0, 0, TAU); c.stroke(); }
+  c.restore(); c.strokeStyle = 'rgba(236,234,229,.55)'; c.lineWidth = 2; c.beginPath(); c.arc(400, 92, 62, 0, TAU); c.stroke();
+  c.fillStyle = 'rgba(236,234,229,.7)'; c.font = '13px "Yuji Boku","Shippori Mincho",serif'; c.textAlign = 'center'; c.fillText('龍宮', 400, 170);
+  // mer
+  for (let i = 0; i < 7; i++) { c.strokeStyle = 'rgba(236,234,229,' + (0.12 + i * 0.03) + ')'; c.lineWidth = 1.6; c.beginPath(); for (let x = 0; x <= 500; x += 8) { const y = 236 + i * 20 + Math.sin(x * 0.03 + now * 0.0013 * (1 + i * 0.1) + i * 1.7) * (3 + i * 0.5); if (x === 0) c.moveTo(x, y); else c.lineTo(x, y); } c.stroke(); }
+  // plage
+  c.fillStyle = '#17171A'; c.beginPath(); c.moveTo(0, 440); c.lineTo(0, 366); for (let x = 0; x <= 500; x += 10) c.lineTo(x, 372 + Math.sin(x * 0.04) * 3 + Math.sin(x * 0.13) * 1.6); c.lineTo(500, 440); c.closePath(); c.fill();
+  c.strokeStyle = 'rgba(236,234,229,.6)'; c.lineWidth = 2; c.beginPath(); for (let x = 0; x <= 500; x += 10) { const y = 372 + Math.sin(x * 0.04) * 3 + Math.sin(x * 0.13) * 1.6; if (x === 0) c.moveTo(x, y); else c.lineTo(x, y); } c.stroke();
+  // cabane qui s'effondre
+  c.save(); c.translate(100, 372); c.globalAlpha = 1 - cr * 0.65; c.fillStyle = '#ECEAE5';
+  c.fillRect(-26, -34, 52, 34); c.fillStyle = '#060606'; c.fillRect(-6, -22, 12, 22);
+  c.save(); c.translate(0, -34 + cr * 12); c.rotate(cr * 0.5 * (cr > 0.3 ? 1 : cr / 0.3)); c.fillStyle = '#ECEAE5'; c.beginPath(); c.moveTo(-36, 0); c.lineTo(0, -26 + cr * 10); c.lineTo(36, 0); c.closePath(); c.fill(); c.restore();
+  c.restore(); c.globalAlpha = 1;
+  // arbre qui grandit
+  const th = 36 + L * 36, tw = 3 + L * 3.2;
+  c.save(); c.translate(204, 372); c.strokeStyle = '#ECEAE5'; c.lineWidth = tw; c.lineCap = 'round'; c.beginPath(); c.moveTo(0, 0); c.quadraticCurveTo(L * 3, -th * 0.5, 0, -th); c.stroke();
+  c.lineWidth = 3.2;
+  for (let i = 0; i < 3; i++) {
+    const y = -th * (0.5 + i * 0.26), w = (20 + L * 8) * (1 - i * 0.22);
+    c.beginPath(); c.moveTo(-w, y + 12); c.quadraticCurveTo(0, y - 10 - L * 3, w, y + 12); c.stroke();
+    for (let k = -2; k <= 2; k++) { c.lineWidth = 1.6; c.beginPath(); c.moveTo(k * w * 0.4, y + 2 + Math.abs(k) * 2); c.lineTo(k * w * 0.4 + k * 2, y + 12 + Math.abs(k) * 2); c.stroke(); }
+    c.lineWidth = 3.2;
+  }
+  c.restore();
+  // pêcheur
+  const age = UR.age; c.save(); c.translate(330, 372); c.rotate(age * 0.28); c.fillStyle = '#ECEAE5';
+  c.beginPath(); c.moveTo(-8, -38); c.lineTo(8, -38); c.lineTo(14, 0); c.lineTo(-14, 0); c.closePath(); c.fill();
+  c.beginPath(); c.arc(0, -46, 7, 0, TAU); c.fill();
+  c.fillStyle = age > 0.5 ? '#ECEAE5' : '#060606'; c.beginPath(); c.arc(0, -48, 7.4, Math.PI * 1.02, Math.PI * 1.98); c.fill();
+  if (age > 0.3) { c.strokeStyle = '#ECEAE5'; c.lineWidth = 2; c.globalAlpha = clamp((age - 0.3) / 0.5, 0, 1); c.beginPath(); c.moveTo(-3, -40); c.quadraticCurveTo(0, -26 - age * 6, 3, -40); c.stroke(); c.globalAlpha = 1; }
+  c.strokeStyle = '#C0341F'; c.lineWidth = 3; c.beginPath(); c.moveTo(-9, -22); c.lineTo(9, -22); c.stroke();
+  c.strokeStyle = '#ECEAE5'; c.lineWidth = 2.2; c.beginPath();
+  if (age < 0.5) { c.moveTo(6, -30); c.lineTo(62, -64); c.stroke(); c.lineWidth = 1; c.beginPath(); c.moveTo(62, -64); c.lineTo(66, 0); c.stroke(); } else { c.moveTo(8, 0); c.lineTo(34, -2); c.stroke(); c.beginPath(); c.moveTo(14, -24); c.lineTo(26, 0); c.stroke(); }
+  c.restore();
+  // la boîte
+  c.save(); c.translate(392, 372); const open = UR.boxed ? clamp((now - UR.mT0) / 500, 0, 1) : 0;
+  c.fillStyle = '#ECEAE5'; c.fillRect(-14, -16, 28, 16);
+  c.save(); c.translate(-14 - open * 4, -16 - open * 16); c.rotate(-open * 0.7); c.fillRect(0, -5, 28, 5); c.restore();
+  c.strokeStyle = '#C0341F'; c.lineWidth = 2.4; c.beginPath(); c.moveTo(-14, -8); c.lineTo(14, -8); if (!open) { c.moveTo(0, -16); c.lineTo(0, 0); } c.stroke();
+  c.restore();
+  // fumée
+  UR.smoke = UR.smoke.filter((s) => now - s.t0 < s.life);
+  for (const s of UR.smoke) {
+    const a = (now - s.t0) / 1000; if (a < 0) continue; const k = (now - s.t0) / s.life, r = s.r + s.g * a;
+    glowDot(c, s.x + s.vx * a, s.y + s.vy * a, r, '240,238,232', 0.34 * (1 - k) * Math.min(1, a * 4));
+  }
+};
+
+kgInit(); ktUpdate(); urUpdate(); tbText();
+
+/* =====================================================================
+   BOUCLE & DÉMARRAGE
+   ===================================================================== */
+let last = performance.now();
+function loop(now) {
+  requestAnimationFrame(loop);
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  try { Fx.frame(now); } catch (e) { Fx.rings.length = 0; }
+  try { if (cur === 0) sw1.frame(now, dt); } catch (e) { console.error(e); }
+  try { if (cur === 2 && $('#swordBox').classList.contains('on')) sw2.frame(now, dt); } catch (e) { console.error(e); }
+  const tk = TICK[chs[cur].id]; if (tk) { try { tk(now, dt); } catch (e) { console.error(e); } }
+}
+window.addEventListener('resize', () => { resize(); carSet(cs.idx); });
+resize(); carSet(0); revealChapter(chs[0], 260);
+window.__dbg = { views, goto: (i) => goto(i, W * 0.3, H * 0.6), sw1, sw2, Fx, KG, KT, TB, UR, kgSlash };
+requestAnimationFrame(loop);
+})();
+
+</script>
+</body>
+</html>
